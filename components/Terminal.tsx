@@ -1,7 +1,9 @@
 import React, {
+  startTransition,
   Suspense,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -18,35 +20,6 @@ import {
 } from 'modules/FileSystem';
 import AsciiRenderer from 'components/AsciiRenderer';
 import styles from 'styles/Terminal.module.scss';
-
-// Initialize the file system with some directories and files
-try {
-  hardDrive.createNestedDirectories({
-    home: {
-      douugdev: {
-        projects: {},
-      },
-    },
-    etc: null,
-    lib: {
-      python3: null,
-    },
-    tmp: null,
-    usr: null,
-  });
-  const homeDir = hardDrive.findDirectory('home')!.findDirectory('douugdev')!;
-
-  homeDir
-    .findDirectory('projects')
-    ?.createFile('thisWebsite.txt', 'This website is a work in progress');
-  homeDir.createFile(
-    'welcome.txt',
-    `
-      Welcome!
-      Bla bla
-    `
-  );
-} catch {}
 
 const RotatingText: React.FC = () => {
   const textRef = useRef<Mesh>(null!);
@@ -71,16 +44,17 @@ const RotatingText: React.FC = () => {
 };
 
 const Terminal = () => {
-  const [loadingProgress, setLoadingProgress] = useState<number>(0);
-  const [currentDirectory, setCurrentDirectory] = useState<Directory>(
-    hardDrive.findDirectory('home')?.findDirectory('douugdev') ?? hardDrive
+  const [loadingProgress, setLoadingProgress] = useState<number>(
+    process.env.NODE_ENV === 'production' ? 0 : 100
   );
+  const [currentDirectory, setCurrentDirectory] =
+    useState<Directory>(hardDrive);
   const [commandInput, setCommandInput] = useState<string>('');
   const [logs, setLogs] = useState<string[]>([
     'Welcome! I\'m Douglas "douugdev" Silva, a front-end developer.',
     'This is an interactive terminal you can use to explore my work!',
     '\n',
-    'Start by typing `ls` to list all folders.',
+    'Theres a text file inside this folder, use `cat readme.txt` to read it.',
     '\n',
   ]);
   const [caret, setCaret] = useState<string>('█');
@@ -170,8 +144,8 @@ const Terminal = () => {
     setLogs([]);
   }, []);
 
-  const cat = useCallback((pathToFile: string) => {
-    try {
+  const cat = useCallback(
+    (pathToFile: string) => {
       if (pathToFile.includes('/')) {
         throw Error(
           'Sorry, absolute and relative paths are not yet implemented.'
@@ -186,14 +160,10 @@ const Terminal = () => {
 
       const contents = file.read();
 
-      log('info', contents.split('\n'));
-    } catch (e: any) {
-      console.error(e);
-      if (e instanceof Error) {
-        log('error', e.message);
-      }
-    }
-  }, []);
+      return contents.split('\n');
+    },
+    [currentDirectory]
+  );
 
   const help = useCallback(() => {
     return [
@@ -237,7 +207,13 @@ const Terminal = () => {
     message: string | string[] | string[][]
   ) => {
     const commandString = `${currentDirectory.path} $ ` + commandInput;
-
+    console.log(
+      [
+        ...logs,
+        commandString,
+        type === 'info' ? message : `Error: ${message}`,
+      ].flat(3)
+    );
     setLogs((prev) =>
       [
         ...prev,
@@ -284,6 +260,52 @@ const Terminal = () => {
     }, 50);
     return () => clearTimeout(timeout);
   }, [loadingProgress]);
+
+  useLayoutEffect(() => {
+    if (!hardDrive.contents.length) {
+      hardDrive.createNestedDirectories({
+        home: {
+          douugdev: {
+            projects: null,
+          },
+        },
+        etc: null,
+        lib: {
+          python3: null,
+        },
+        tmp: null,
+        usr: null,
+      });
+      const homeDir = hardDrive
+        .findDirectory('home')!
+        .findDirectory('douugdev')!;
+
+      homeDir.createFile(
+        'readme.txt',
+        `
+        There's a few commands you can use:
+
+        cd    - Change directories, usage: 'cd /home'
+        mkdir - Create a directory, usage: 'mkdir myDirectory'
+        ls    - List files and directories, usage: 'ls'
+        help  - List available commands (it updates automatically even if I forget to add docs here), usage: 'help'
+        pwd   - Shows your current path, usage: 'pwd'
+        echo  - Just repeats what you type, usage: 'echo Hello world!'
+        clear - Clears the terminal, usage: 'clear'
+        cat   - Displays content from files, usage: 'cat readme.txt'
+
+        It's all a bit buggy at the moment, but a cool WIP in my opinion.
+      `
+      );
+      homeDir
+        .findDirectory('projects')
+        ?.createFile('thisWebsite.txt', 'This website is a work in progress');
+
+      startTransition(() => {
+        setCurrentDirectory(homeDir);
+      });
+    }
+  }, []);
 
   return (
     <Draggable handle="#handle">

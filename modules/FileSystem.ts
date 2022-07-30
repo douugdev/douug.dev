@@ -1,11 +1,11 @@
 type NestedDirectories = { [key: string]: null | NestedDirectories };
 export type Permission = typeof READ | typeof WRITE | typeof EXECUTE;
-export const READ = "r";
-export const WRITE = "w";
-export const EXECUTE = "x";
+export const READ = 'r';
+export const WRITE = 'w';
+export const EXECUTE = 'x';
 
-export const CURRENT_DIRECTORY = ".";
-export const PREVIOUS_DIRECTORY = "..";
+export const CURRENT_DIRECTORY = '.';
+export const PREVIOUS_DIRECTORY = '..';
 
 export const Decoder = new TextDecoder();
 export const Encoder = new TextEncoder();
@@ -49,7 +49,7 @@ export class File {
 
   constructor(name: string) {
     if (name.length === 0) {
-      throw Error("The file must have a name.");
+      throw Error('The file must have a name.');
     }
     this._name = name;
     this._permissions = [READ, WRITE];
@@ -117,13 +117,13 @@ export class Directory {
 
   constructor(name: string, previousDirectory: Directory | null) {
     if (name.length === 0) {
-      throw Error("The directory must have a name.");
+      throw Error('The directory must have a name.');
     }
-    this._previousDirectory = previousDirectory;
     this._name = name;
+    this._createdAt = new Date();
+    this._previousDirectory = previousDirectory;
     this._contents = [];
     this._updateAt = new Date();
-    this._createdAt = new Date();
   }
 
   public createFile(name: string, content?: string) {
@@ -134,6 +134,7 @@ export class Directory {
     this._contents = [...this._contents, newFile].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
+    this._updateAt = new Date();
   }
 
   public createNestedDirectories(nestedDirectories: NestedDirectories) {
@@ -146,29 +147,31 @@ export class Directory {
   }
 
   public createDirectory(name: string) {
-    if (name.includes(".")) {
-      throw Error("A directory cannot have an extension.");
+    if (name.includes('.')) {
+      throw Error('A directory cannot have an extension.');
     }
     if (this.findDirectory(name) !== undefined) {
-      throw Error("File or directory already exists.");
+      throw Error('File or directory already exists.');
     }
     const newDirectory = new Directory(name, this);
 
     this._contents = [...this._contents, newDirectory].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
+    this._updateAt = new Date();
   }
 
   public delete(fileOrDirectoryName: string) {
     this._contents = this._contents.filter(
       (fileOrDirectory) => fileOrDirectory.name !== fileOrDirectoryName
     );
+    this._updateAt = new Date();
   }
 
   public findDirectory(directoryName: string) {
     return this._contents.find((fileOrDirectory) => {
       return (
-        fileOrDirectory.constructor.name === "Directory" &&
+        fileOrDirectory.constructor.name === 'Directory' &&
         fileOrDirectory.name === directoryName
       );
     }) as Directory | undefined;
@@ -177,7 +180,7 @@ export class Directory {
   public findFile(fileName: string) {
     return this._contents.find((fileOrDirectory) => {
       return (
-        fileOrDirectory.constructor.name === "File" &&
+        fileOrDirectory.constructor.name === 'File' &&
         fileOrDirectory.name === fileName
       );
     }) as File | undefined;
@@ -185,17 +188,17 @@ export class Directory {
 
   private _recursePath(currentPath: string[]): string[] {
     if (this._previousDirectory === null) {
-      return ["", ...currentPath, ""];
+      return ['', ...currentPath, ''];
     } else {
       return this._previousDirectory._recursePath([this.name, ...currentPath]);
     }
   }
 
   public get path() {
-    const path = this._recursePath([]).join("/");
+    const path = this._recursePath([]).join('/');
 
     return path;
   }
 }
 
-export const hardDrive = new Directory("/", null);
+export const hardDrive = new Directory('/', null);

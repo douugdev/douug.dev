@@ -11,6 +11,7 @@ export const Decoder = new TextDecoder();
 export const Encoder = new TextEncoder();
 
 export class File {
+  public isFile = true;
   private _name: string;
   private _permissions: Permission[];
   private _contents: Uint8Array;
@@ -79,6 +80,7 @@ export class File {
 }
 
 export class Directory {
+  public isDirectory = true;
   private _previousDirectory: Directory | null;
   private _name: string;
   private _contents: (File | Directory)[];
@@ -119,11 +121,11 @@ export class Directory {
     if (name.length === 0) {
       throw Error('The directory must have a name.');
     }
-    this._name = name;
-    this._createdAt = new Date();
     this._previousDirectory = previousDirectory;
+    this._name = name;
     this._contents = [];
     this._updateAt = new Date();
+    this._createdAt = new Date();
   }
 
   public createFile(name: string, content?: string) {
@@ -134,14 +136,13 @@ export class Directory {
     this._contents = [...this._contents, newFile].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
-    this._updateAt = new Date();
   }
 
   public createNestedDirectories(nestedDirectories: NestedDirectories) {
     for (const [directoryName, content] of Object.entries(nestedDirectories)) {
       this.createDirectory(directoryName);
       if (content !== null) {
-        this.findDirectory(directoryName)?.createNestedDirectories(content);
+        this.findDirectory(directoryName)!.createNestedDirectories(content);
       }
     }
   }
@@ -158,20 +159,18 @@ export class Directory {
     this._contents = [...this._contents, newDirectory].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
-    this._updateAt = new Date();
   }
 
   public delete(fileOrDirectoryName: string) {
     this._contents = this._contents.filter(
       (fileOrDirectory) => fileOrDirectory.name !== fileOrDirectoryName
     );
-    this._updateAt = new Date();
   }
 
   public findDirectory(directoryName: string) {
     return this._contents.find((fileOrDirectory) => {
       return (
-        fileOrDirectory.constructor.name === 'Directory' &&
+        'isDirectory' in fileOrDirectory &&
         fileOrDirectory.name === directoryName
       );
     }) as Directory | undefined;
@@ -179,10 +178,7 @@ export class Directory {
 
   public findFile(fileName: string) {
     return this._contents.find((fileOrDirectory) => {
-      return (
-        fileOrDirectory.constructor.name === 'File' &&
-        fileOrDirectory.name === fileName
-      );
+      return 'isFile' in fileOrDirectory && fileOrDirectory.name === fileName;
     }) as File | undefined;
   }
 
@@ -200,3 +196,5 @@ export class Directory {
     return path;
   }
 }
+
+export const hardDrive = new Directory('/', null);

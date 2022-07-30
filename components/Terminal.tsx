@@ -3,7 +3,6 @@ import React, {
   Suspense,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -15,6 +14,7 @@ import Draggable from 'react-draggable';
 import {
   CURRENT_DIRECTORY,
   Directory,
+  hardDrive,
   PREVIOUS_DIRECTORY,
 } from 'modules/FileSystem';
 import AsciiRenderer from 'components/AsciiRenderer';
@@ -43,7 +43,6 @@ const RotatingText: React.FC = () => {
 };
 
 const Terminal = () => {
-  const hardDrive = useMemo(() => new Directory('/', null), []);
   const [loadingProgress, setLoadingProgress] = useState<number>(
     process.env.NODE_ENV === 'production' ? 0 : 100
   );
@@ -122,7 +121,7 @@ const Terminal = () => {
 
       setCurrentDirectory(tempDirectory);
     },
-    [currentDirectory, hardDrive]
+    [currentDirectory, setCurrentDirectory]
   );
 
   const mkdir = useCallback(
@@ -172,7 +171,7 @@ const Terminal = () => {
     ];
   }, []);
 
-  const pwd = useCallback(() => currentDirectory.path, [currentDirectory]);
+  const pwd = useCallback(() => currentDirectory.path, []);
   const echo = useCallback((...args: string[]) => [args.join(' ')], []);
 
   const runCommand = useCallback(() => {
@@ -262,8 +261,8 @@ const Terminal = () => {
   }, [loadingProgress]);
 
   useEffect(() => {
-    if (hardDrive && !hardDrive.contents.length) {
-      hardDrive?.createNestedDirectories({
+    if (!hardDrive.contents.length) {
+      hardDrive.createNestedDirectories({
         home: {
           douugdev: {
             projects: null,
@@ -277,10 +276,10 @@ const Terminal = () => {
         usr: null,
       });
       const homeDir = hardDrive
-        ?.findDirectory('home')
-        ?.findDirectory('douugdev');
+        .findDirectory('home')!
+        .findDirectory('douugdev')!;
 
-      homeDir?.createFile(
+      homeDir.createFile(
         'readme.txt',
         `
         There's a few commands you can use:
@@ -298,14 +297,14 @@ const Terminal = () => {
       `
       );
       homeDir
-        ?.findDirectory('projects')
+        .findDirectory('projects')
         ?.createFile('thisWebsite.txt', 'This website is a work in progress');
 
-      // startTransition(() => {
-      setCurrentDirectory(homeDir ?? hardDrive);
-      // });
+      startTransition(() => {
+        setCurrentDirectory(homeDir);
+      });
     }
-  }, [hardDrive]);
+  }, []);
 
   return (
     <Draggable handle="#handle">

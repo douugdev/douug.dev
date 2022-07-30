@@ -15,7 +15,6 @@ import Draggable from 'react-draggable';
 import {
   CURRENT_DIRECTORY,
   Directory,
-  hardDrive,
   PREVIOUS_DIRECTORY,
 } from 'modules/FileSystem';
 import AsciiRenderer from 'components/AsciiRenderer';
@@ -44,6 +43,7 @@ const RotatingText: React.FC = () => {
 };
 
 const Terminal = () => {
+  const hardDrive = useMemo(() => new Directory('/', null), []);
   const [loadingProgress, setLoadingProgress] = useState<number>(
     process.env.NODE_ENV === 'production' ? 0 : 100
   );
@@ -261,7 +261,7 @@ const Terminal = () => {
     return () => clearTimeout(timeout);
   }, [loadingProgress]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!hardDrive.contents.length) {
       hardDrive.createNestedDirectories({
         home: {

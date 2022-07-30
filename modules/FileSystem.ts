@@ -200,5 +200,3 @@ export class Directory {
     return path;
   }
 }
-
-export const hardDrive = new Directory('/', null);

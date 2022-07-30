@@ -141,7 +141,7 @@ export class Directory {
     for (const [directoryName, content] of Object.entries(nestedDirectories)) {
       this.createDirectory(directoryName);
       if (content !== null) {
-        this.findDirectory(directoryName)!.createNestedDirectories(content);
+        this.findDirectory(directoryName)?.createNestedDirectories(content);
       }
     }
   }

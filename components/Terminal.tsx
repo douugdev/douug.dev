@@ -122,7 +122,7 @@ const Terminal = () => {
 
       setCurrentDirectory(tempDirectory);
     },
-    [currentDirectory, setCurrentDirectory]
+    [currentDirectory, hardDrive]
   );
 
   const mkdir = useCallback(
@@ -172,7 +172,7 @@ const Terminal = () => {
     ];
   }, []);
 
-  const pwd = useCallback(() => currentDirectory.path, []);
+  const pwd = useCallback(() => currentDirectory.path, [currentDirectory]);
   const echo = useCallback((...args: string[]) => [args.join(' ')], []);
 
   const runCommand = useCallback(() => {
@@ -262,8 +262,8 @@ const Terminal = () => {
   }, [loadingProgress]);
 
   useEffect(() => {
-    if (!hardDrive.contents.length) {
-      hardDrive.createNestedDirectories({
+    if (hardDrive && !hardDrive.contents.length) {
+      hardDrive?.createNestedDirectories({
         home: {
           douugdev: {
             projects: null,
@@ -277,10 +277,10 @@ const Terminal = () => {
         usr: null,
       });
       const homeDir = hardDrive
-        .findDirectory('home')!
-        .findDirectory('douugdev')!;
+        ?.findDirectory('home')
+        ?.findDirectory('douugdev');
 
-      homeDir.createFile(
+      homeDir?.createFile(
         'readme.txt',
         `
         There's a few commands you can use:
@@ -298,14 +298,14 @@ const Terminal = () => {
       `
       );
       homeDir
-        .findDirectory('projects')
+        ?.findDirectory('projects')
         ?.createFile('thisWebsite.txt', 'This website is a work in progress');
 
-      startTransition(() => {
-        setCurrentDirectory(homeDir);
-      });
+      // startTransition(() => {
+      setCurrentDirectory(homeDir ?? hardDrive);
+      // });
     }
-  }, []);
+  }, [hardDrive]);
 
   return (
     <Draggable handle="#handle">

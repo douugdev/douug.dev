@@ -1,10 +1,10 @@
-import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo } from "react";
-import { AsciiEffect } from "three-stdlib";
+import { useFrame, useThree } from '@react-three/fiber';
+import { useEffect, useMemo } from 'react';
+import { AsciiEffect } from 'three-stdlib';
 
 const AsciiRenderer = ({
   renderIndex = 1,
-  characters = "@%*=+: ",
+  characters = '@%*=+: ',
   ...options
 }) => {
   // Reactive state
@@ -13,24 +13,24 @@ const AsciiRenderer = ({
   // Create effect
   const effect = useMemo(() => {
     const effect = new AsciiEffect(gl, characters, options);
-    effect.domElement.id = "ascii";
-    effect.domElement.style.position = "absolute";
-    effect.domElement.style.top = "0px";
-    effect.domElement.style.left = "0px";
-    effect.domElement.style.color = "greenyellow";
-    effect.domElement.style.backgroundColor = "transparent";
-    effect.domElement.style.pointerEvents = "none";
+    effect.domElement.id = 'ascii';
+    effect.domElement.style.position = 'absolute';
+    effect.domElement.style.top = '0px';
+    effect.domElement.style.left = '0px';
+    effect.domElement.style.color = 'greenyellow';
+    effect.domElement.style.backgroundColor = 'transparent';
+    effect.domElement.style.pointerEvents = 'none';
     return effect;
-  }, [characters, options.invert]);
+  }, [characters, gl, options]);
 
   // Append on mount, remove on unmount
   useEffect(() => {
     document
-      .getElementById("loading-container")
+      .getElementById('loading-container')
       ?.appendChild(effect.domElement);
     return () => {
       console.log();
-      document.getElementById("ascii")?.remove();
+      document.getElementById('ascii')?.remove();
     };
   }, [effect]);
 

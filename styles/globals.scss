@@ -1,0 +1,63 @@
+html,
+body,
+#__next {
+  height: 100%;
+  width: 100%;
+  /* padding: 50px; */
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+  overflow: hidden;
+  /* background-color: black; */
+}
+
+#__next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+html {
+  background-image: url(https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?cs=srgb&dl=pexels-stephan-seeber-1261728.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+label,
+p,
+span {
+  color: greenyellow;
+  font-family: monospace;
+  font-size: large;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+input {
+  color: greenyellow;
+  border: 0;
+  outline: 0;
+}
+input:focus {
+  outline: none !important;
+}
+
+canvas {
+  image-rendering: pixelated;
+}
+
+h1,
+h2 {
+  color: greenyellow;
+  font-family: monospace;
+  font-weight: 100;
+  text-align: center;
+}

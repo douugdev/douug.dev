@@ -7,40 +7,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Text3D } from '@react-three/drei';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Mesh } from 'three';
-import Draggable from 'react-draggable';
+
 import {
   CURRENT_DIRECTORY,
   Directory,
   hardDrive,
   PREVIOUS_DIRECTORY,
 } from 'modules/FileSystem';
-import AsciiRenderer from 'components/AsciiRenderer';
 import styles from 'styles/Terminal.module.scss';
-
-const RotatingText: React.FC = () => {
-  const textRef = useRef<Mesh>(null!);
-
-  useFrame(({ clock }) => {
-    textRef.current.geometry.center();
-    textRef.current.rotation.z = clock.getElapsedTime() * 1;
-    textRef.current.rotation.x = clock.getElapsedTime() * 1;
-  });
-
-  return (
-    <Text3D
-      ref={textRef}
-      bevelSegments={1}
-      position={[0, 0, 0]}
-      font={'/rubik.typeface.json'}
-    >
-      DOUUG
-      <meshPhongMaterial color={'green'} />
-    </Text3D>
-  );
-};
 
 const Terminal = () => {
   const [loadingProgress, setLoadingProgress] = useState<number>(
@@ -110,10 +84,10 @@ const Terminal = () => {
           const directory = tempDirectory.findDirectory(filename);
           const file = tempDirectory.findFile(filename);
           if (file) {
-            throw Error('The target is not a directory.');
+            throw Error('Target is not a directory.');
           } else if (directory === undefined) {
             // Path doesn't exist
-            throw Error('The system cannot find the path specified.');
+            throw Error('No such file or directory.');
           }
           tempDirectory = directory;
         }
@@ -293,7 +267,7 @@ const Terminal = () => {
         clear - Clears the terminal, usage: 'clear'
         cat   - Displays content from files, usage: 'cat readme.txt'
 
-        It's all a bit buggy at the moment, but a cool WIP in my opinion.
+        It's all a bit buggy at the moment, but a cool PoC!!
       `
       );
       homeDir
@@ -307,79 +281,46 @@ const Terminal = () => {
   }, []);
 
   return (
-    <Draggable handle="#handle">
-      <div className={styles.window}>
-        <div id="handle" className={styles.handle}>
-          <div className={styles.windowButtonClose}></div>
-          <div className={styles.windowButtonMinimize}></div>
-          <div className={styles.windowButtonMaximize}></div>
-        </div>
-
-        <input
-          ref={inputRef}
-          autoComplete="off"
-          spellCheck={false}
-          autoCapitalize="off"
-          autoCorrect="off"
-          autoFocus={true}
-          name="input"
-          type="text"
-          className={styles.hiddenInput}
-          value={commandInput}
-          onChange={(e) => setCommandInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              runCommand();
-              setCommandInput('');
-            }
-          }}
-        />
-        <div
-          className={styles.terminal}
-          onClick={() => inputRef.current?.focus()}
-        >
-          {loadingProgress >= 100 ? (
-            <div className={styles.terminalContainer}>
-              <div className={styles.logsContainer}>
-                {logs.map((log, index) => (
-                  <span className={styles.logs} key={`log_${index}`}>
-                    {log}
-                  </span>
-                ))}
-                <div />
-                <div ref={endRef}>
-                  <label htmlFor="input">{currentDirectory.path} $ </label>
-                  <span> {commandInput + caret}</span>
-                </div>
-              </div>
+    <div className={styles.fill}>
+      <input
+        ref={inputRef}
+        autoComplete="off"
+        spellCheck={false}
+        autoCapitalize="off"
+        autoCorrect="off"
+        autoFocus={true}
+        name="input"
+        type="text"
+        className={styles.hiddenInput}
+        value={commandInput}
+        onChange={(e) => setCommandInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            runCommand();
+            setCommandInput('');
+          }
+        }}
+      />
+      <div
+        className={styles.terminal}
+        onClick={() => inputRef.current?.focus()}
+      >
+        <div className={styles.terminalContainer}>
+          <div className={styles.logsContainer}>
+            {logs.map((log, index) => (
+              <span className={styles.logs} key={`log_${index}`}>
+                {log}
+              </span>
+            ))}
+            <div />
+            <div ref={endRef}>
+              <label htmlFor="input">{currentDirectory.path} $ </label>
+              <span> {commandInput + caret}</span>
             </div>
-          ) : (
-            <div className={styles.canvasContainer}>
-              <div
-                id="loading-container"
-                style={{ flex: 1, position: 'relative' }}
-              >
-                <Suspense fallback={<h1>Booting...</h1>}>
-                  <Canvas
-                    className={styles.canvas}
-                    gl={{ antialias: false }}
-                    dpr={0.2}
-                  >
-                    <RotatingText />
-                    <AsciiRenderer invert resolution={0.25} />
-                    <directionalLight />
-                  </Canvas>
-                </Suspense>
-              </div>
-              <h2>
-                {'▒'.repeat(Math.floor(loadingProgress / 2))}
-                {'░'.repeat(100 / 2 - Math.floor(loadingProgress / 2))}
-              </h2>
-            </div>
-          )}
+          </div>
         </div>
       </div>
-    </Draggable>
+    </div>
   );
 };
 

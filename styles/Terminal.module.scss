@@ -1,46 +1,14 @@
-.windowButton {
-  border-radius: 999px;
-  width: 1rem;
-  height: 1rem;
-  margin: 0 0.25rem;
-
-  &Close {
-    @extend .windowButton;
-    background-color: #ff605c;
-  }
-  &Minimize {
-    @extend .windowButton;
-    background-color: #ffbd44;
-  }
-  &Maximize {
-    @extend .windowButton;
-    background-color: #00ca4e;
-  }
-}
-
-.handle {
-  padding: 0.4rem;
-  background-color: #ffffffb4;
+.fill {
+  height: 100%;
   width: 100%;
-  height: 2rem;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.window {
-  height: 75%;
-  width: 75%;
-  display: flex;
-  flex-direction: column;
-  border-radius: 1rem;
-  overflow: hidden;
+  flex: 1;
 }
 
 .terminal {
   background-color: #00000050;
+  color: white;
   flex: 1;
+  height: 100%;
   width: 100%;
   padding: 2rem;
   backdrop-filter: blur(30pt);
@@ -73,20 +41,6 @@
 
 .terminal::-webkit-scrollbar-thumb {
   background-color: greenyellow;
-}
-
-.canvas {
-  position: absolute;
-  left: 100vw;
-  right: 0;
-  bottom: 0;
-  top: 0;
-}
-
-.canvasContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
 }
 
 .hiddenInput {

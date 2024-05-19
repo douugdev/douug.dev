@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Red+Hat+Mono:ital,wght@0,300..700;1,300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 html,
 body,
 #__next {
@@ -5,8 +8,8 @@ body,
   width: 100%;
   /* padding: 50px; */
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
   overflow: hidden;
   /* background-color: black; */
@@ -19,7 +22,6 @@ body,
 }
 
 html {
-  background-image: url(https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?cs=srgb&dl=pexels-stephan-seeber-1261728.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -32,8 +34,7 @@ a {
 label,
 p,
 span {
-  color: greenyellow;
-  font-family: monospace;
+  font-family: 'Red Hat Mono', monospace;
   font-size: large;
 }
 
@@ -42,7 +43,6 @@ span {
 }
 
 input {
-  color: greenyellow;
   border: 0;
   outline: 0;
 }

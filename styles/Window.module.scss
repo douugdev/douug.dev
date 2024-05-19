@@ -1,0 +1,58 @@
+.windowButton {
+  border: 0;
+  border-radius: 999px;
+  width: 1rem;
+  height: 1rem;
+  margin: 0 0.25rem;
+  cursor: pointer;
+
+  &Close {
+    @extend .windowButton;
+    background-color: #ff605c;
+  }
+  &Minimize {
+    @extend .windowButton;
+    background-color: #ffbd44;
+  }
+  &Maximize {
+    @extend .windowButton;
+    background-color: #00ca4e;
+  }
+}
+
+.windowButtonsContainer {
+  position: absolute;
+}
+
+.handle {
+  padding: 0.4rem;
+  background-color: #ffffff65;
+  backdrop-filter: blur(10pt);
+  width: 100%;
+  height: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.window {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.focused {
+  z-index: 200;
+}
+
+.content {
+  flex: 1;
+  height: 100%;
+}

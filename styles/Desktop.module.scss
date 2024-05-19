@@ -1,0 +1,67 @@
+.desktop {
+  width: 100vw;
+  height: 100vh;
+  background-size: cover; /* <------ */
+  background-repeat: no-repeat;
+  background-position: center center; /* optional, center the image */
+}
+
+.dock {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translate(-50%);
+
+  min-width: 10rem;
+  height: 5rem;
+
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20pt);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.5rem;
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 0.2rem;
+
+  justify-content: center;
+
+  &Focused {
+    height: 4rem;
+    width: 4rem;
+
+    img {
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  &Item {
+    height: 4.5rem;
+    width: 4.5rem;
+    padding: 0.5rem;
+    border-radius: 1.5rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: filter 80ms ease-in-out;
+    transition: background-color 80ms ease-in-out;
+
+    cursor: pointer;
+
+    &:hover {
+      filter: brightness(110%);
+      background-color: rgba(255, 255, 255, 0.479);
+    }
+
+    img {
+      height: 4rem;
+      width: 4rem;
+    }
+  }
+}

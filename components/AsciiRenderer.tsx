@@ -17,7 +17,7 @@ const AsciiRenderer = ({
     effect.domElement.style.position = 'absolute';
     effect.domElement.style.top = '0px';
     effect.domElement.style.left = '0px';
-    effect.domElement.style.color = 'greenyellow';
+    effect.domElement.style.color = '#ffffff5f';
     effect.domElement.style.backgroundColor = 'transparent';
     effect.domElement.style.pointerEvents = 'none';
     return effect;

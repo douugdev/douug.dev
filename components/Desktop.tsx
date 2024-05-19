@@ -53,7 +53,7 @@ const Desktop = () => {
         };
 
         return (
-          <Window {...defaultWindowProps}>
+          <Window key={windowItem.processId} {...defaultWindowProps}>
             <windowItem.window.Component {...defaultWindowProps} />
           </Window>
         );
@@ -67,6 +67,7 @@ const Desktop = () => {
 
             return (
               <div
+                key={`${appName}_dock_item`}
                 className={`${styles.dockItem} ${
                   dockItem?.window.isFocused ? styles.dockItemFocused : ''
                 }`}

@@ -27,7 +27,7 @@ const Browser = ({
 }: BrowserProps) => {
   const [currentURL, setCurrentURL] = useState<string>(
     launchOpts?.initialURL ||
-      'https://www.youtube.com/embed/i99UG0MJDwY?si=hgP9fU7dvN2cEOZ9&autoplay=1'
+      'https://www.youtube.com/embed/dQw4w9WgXcQ?si=zCVyrSU3qkd5cJNG&autoplay=1'
   );
   const [editingURL, setEditingURL] = useState<string>(currentURL);
   const [isEditingURL, setIsEditingURL] = useState<boolean>(false);

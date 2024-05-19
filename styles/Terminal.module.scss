@@ -29,18 +29,16 @@
 }
 
 .terminal::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: grey;
+  background-color: rgba(128, 128, 128, 0.164);
 }
 
 .terminal::-webkit-scrollbar {
   width: 10px;
-  background-color: grey;
+  background-color: rgba(128, 128, 128, 0.281);
 }
 
 .terminal::-webkit-scrollbar-thumb {
-  background-color: greenyellow;
+  background-color: rgba(255, 255, 255, 0.486);
 }
 
 .hiddenInput {

@@ -9,9 +9,11 @@ export type ProcessType =
       processId: string;
       iconSource: string;
       type: 'windowed';
-
+      launchOpts: { [key: string]: string };
       window: {
-        Component: React.FunctionComponent<WindowProps>;
+        Component: React.FunctionComponent<
+          WindowProps & { launchOpts: { [key: string]: string } }
+        >;
         hideDefaultHandler?: boolean;
         handleRef?: MutableRefObject<HTMLDivElement>;
         pos: { x: number; y: number };
@@ -29,6 +31,7 @@ export type ProcessType =
       appName: string;
       processId: string;
       iconSource: string;
+      launchOpts: { [key: string]: string };
       type: 'background';
     };
 
@@ -40,7 +43,10 @@ export const globalPath = atom<string[]>([]);
 
 export const processes = atom<ProcessType[]>([]);
 
-export const launchApp = async (appName: string) => {
+export const launchApp = async (
+  appName: string,
+  launchOpts: { [key: string]: string } = {}
+) => {
   const oldProcesses = processes.get();
 
   const appInfo = await import(`apps/${appName}`);
@@ -52,6 +58,7 @@ export const launchApp = async (appName: string) => {
       processId: v4(),
       iconSource: appInfo.iconSource || `/appIcons/${appName}.png`,
       type: 'windowed',
+      launchOpts: launchOpts,
       window: {
         Component: appInfo.WindowComponent,
         hideDefaultHandler: appInfo.hideDefaultHandler,

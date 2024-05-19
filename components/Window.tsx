@@ -81,7 +81,7 @@ const Window = ({
           : handleRef.current
       );
     }
-  }, []);
+  }, [customHandleRef, customHandler]);
 
   return (
     <div

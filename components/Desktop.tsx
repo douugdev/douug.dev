@@ -13,6 +13,7 @@ import {
 import dynamic from 'next/dynamic';
 import { computed } from 'nanostores';
 import { removeStringDuplicates } from 'utils/array';
+import Image from 'next/image';
 
 const Window = dynamic(() => import('components/Window'), { ssr: false });
 
@@ -38,7 +39,11 @@ const Desktop = () => {
       style={{ backgroundImage: `url(${de.desktop.wallpaper})` }}
     >
       {windows.map((windowItem) => {
-        if (windowItem.type === 'background') return <></>;
+        if (
+          windowItem.type === 'background' ||
+          windowItem.window.state === 'minimized'
+        )
+          return <></>;
 
         const defaultWindowProps = {
           onClose: () => closeWindow(windowItem.processId),
@@ -54,7 +59,10 @@ const Desktop = () => {
 
         return (
           <Window key={windowItem.processId} {...defaultWindowProps}>
-            <windowItem.window.Component {...defaultWindowProps} />
+            <windowItem.window.Component
+              launchOpts={windowItem.launchOpts}
+              {...defaultWindowProps}
+            />
           </Window>
         );
       })}
@@ -73,7 +81,12 @@ const Desktop = () => {
                 }`}
                 onClick={() => launchApp(appName)}
               >
-                <img src={dockItem?.iconSource ?? `/appIcons/${appName}.png`} />
+                <Image
+                  src={dockItem?.iconSource ?? `/appIcons/${appName}.png`}
+                  width={200}
+                  height={200}
+                  alt="dock-item"
+                />
               </div>
             );
           }

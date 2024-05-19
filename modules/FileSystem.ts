@@ -11,6 +11,7 @@ export const Decoder = new TextDecoder();
 export const Encoder = new TextEncoder();
 
 export class File {
+  public type = 'file';
   public isFile = true;
   private _name: string;
   private _permissions: Permission[];
@@ -80,6 +81,7 @@ export class File {
 }
 
 export class Directory {
+  public type = 'directory';
   public isDirectory = true;
   private _previousDirectory: Directory | null;
   private _name: string;

@@ -1,6 +1,5 @@
 import React, {
   startTransition,
-  Suspense,
   useCallback,
   useEffect,
   useMemo,
@@ -11,10 +10,12 @@ import React, {
 import {
   CURRENT_DIRECTORY,
   Directory,
+  File,
   hardDrive,
   PREVIOUS_DIRECTORY,
 } from 'modules/FileSystem';
 import styles from 'styles/Terminal.module.scss';
+import { launchApp } from 'stores/OS';
 
 const Terminal = () => {
   const [loadingProgress, setLoadingProgress] = useState<number>(
@@ -105,13 +106,25 @@ const Terminal = () => {
     [currentDirectory]
   );
 
-  const ls = useCallback(() => {
-    return [
-      '.',
-      '..',
-      ...currentDirectory.contents.map((fileOrDir) => fileOrDir.name),
-    ];
-  }, [currentDirectory]);
+  const ls = useCallback(
+    (...args: string[]) => {
+      let func = (fileOrDir: Directory | File) => fileOrDir.name;
+
+      if (args[0]?.includes('l')) {
+        func = (fileOrDir: Directory | File) => {
+          if (fileOrDir.type === 'file') {
+            const file = fileOrDir as File;
+            return `file ${file.permissions} - ${fileOrDir.name}`;
+          }
+
+          return `directory - ${fileOrDir.name}`;
+        };
+      }
+
+      return ['.', '..', ...currentDirectory.contents.map(func)];
+    },
+    [currentDirectory]
+  );
 
   const clear = useCallback(() => {
     setLogs([]);
@@ -145,8 +158,59 @@ const Terminal = () => {
     ];
   }, []);
 
-  const pwd = useCallback(() => currentDirectory.path, []);
+  const pwd = useCallback(() => currentDirectory.path, [currentDirectory.path]);
   const echo = useCallback((...args: string[]) => [args.join(' ')], []);
+  const open = useCallback((...args: string[]) => {
+    switch (args[0]) {
+      case 'browser':
+        launchApp('browser');
+        return [];
+      case 'synth':
+        launchApp('browser', { initialURL: 'https://synth.douug.dev' });
+        return [];
+      // case 'codele':
+      //   launchApp('browser', { initialURL: 'https://codele.douug.dev' });
+      //   return [];
+    }
+
+    return ['No such command'];
+  }, []);
+
+  const log = useCallback(
+    (type: 'info' | 'error', message: string | string[] | string[][]) => {
+      const commandString = `${currentDirectory.path} $ ` + commandInput;
+      console.log(
+        [
+          ...logs,
+          commandString,
+          type === 'info' ? message : `Error: ${message}`,
+        ].flat(3)
+      );
+      setLogs((prev) =>
+        [
+          ...prev,
+          commandString,
+          type === 'info' ? message : `Error: ${message}`,
+        ].flat(3)
+      );
+    },
+    [commandInput, currentDirectory.path, logs]
+  );
+
+  const mapCommandToFunction = useMemo(
+    () => ({
+      cd,
+      mkdir,
+      ls,
+      help,
+      pwd,
+      echo,
+      clear,
+      cat,
+      open,
+    }),
+    [cd, mkdir, ls, help, pwd, echo, clear, cat, open]
+  );
 
   const runCommand = useCallback(() => {
     if (commandInput.length === 0) {
@@ -173,42 +237,7 @@ const Terminal = () => {
         log('error', e.message);
       }
     }
-  }, [commandInput, currentDirectory]);
-
-  const log = (
-    type: 'info' | 'error',
-    message: string | string[] | string[][]
-  ) => {
-    const commandString = `${currentDirectory.path} $ ` + commandInput;
-    console.log(
-      [
-        ...logs,
-        commandString,
-        type === 'info' ? message : `Error: ${message}`,
-      ].flat(3)
-    );
-    setLogs((prev) =>
-      [
-        ...prev,
-        commandString,
-        type === 'info' ? message : `Error: ${message}`,
-      ].flat(3)
-    );
-  };
-
-  const mapCommandToFunction = useMemo(
-    () => ({
-      cd,
-      mkdir,
-      ls,
-      help,
-      pwd,
-      echo,
-      clear,
-      cat,
-    }),
-    [cd, mkdir, ls, help, pwd, echo, clear, cat]
-  );
+  }, [commandInput, log, mapCommandToFunction]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -218,7 +247,7 @@ const Terminal = () => {
 
   useEffect(() => {
     if (endRef.current) {
-      endRef.current.scrollIntoView();
+      endRef.current.scrollTo({ top: Number.MAX_SAFE_INTEGER });
     }
   }, [commandInput]);
 
@@ -266,18 +295,33 @@ const Terminal = () => {
         echo  - Just repeats what you type, usage: 'echo Hello world!'
         clear - Clears the terminal, usage: 'clear'
         cat   - Displays content from files, usage: 'cat readme.txt'
+        open  - Opens an app, usage: 'open browser'
 
         It's all a bit buggy at the moment, but a cool PoC!!
       `
       );
-      homeDir
-        .findDirectory('projects')
-        ?.createFile('thisWebsite.txt', 'This website is a work in progress');
 
-      startTransition(() => {
-        setCurrentDirectory(homeDir);
-      });
+      const projectsDir = homeDir.findDirectory('projects');
+
+      projectsDir?.createFile(
+        'thisWebsite.txt',
+        'This website is a work in progress'
+      );
+      projectsDir?.createFile(
+        'synth.txt',
+        'type "open synth" to see this project'
+      );
+      // projectsDir?.createFile(
+      //   'codele.txt',
+      //   'type "open codele" to see this project'
+      // );
     }
+    startTransition(() => {
+      const homeDir = hardDrive
+        .findDirectory('home')!
+        .findDirectory('douugdev')!;
+      setCurrentDirectory(homeDir);
+    });
   }, []);
 
   return (
@@ -304,6 +348,7 @@ const Terminal = () => {
       <div
         className={styles.terminal}
         onClick={() => inputRef.current?.focus()}
+        ref={endRef}
       >
         <div className={styles.terminalContainer}>
           <div className={styles.logsContainer}>
@@ -313,7 +358,7 @@ const Terminal = () => {
               </span>
             ))}
             <div />
-            <div ref={endRef}>
+            <div>
               <label htmlFor="input">{currentDirectory.path} $ </label>
               <span> {commandInput + caret}</span>
             </div>

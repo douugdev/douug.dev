@@ -1,11 +1,20 @@
-import { MutableRefObject, useState } from 'react';
+import {
+  MutableRefObject,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import styles from 'styles/Browser.module.scss';
 import windowStyles from 'styles/Window.module.scss';
 import { WindowProps } from './Window';
 import { IoLockClosed } from 'react-icons/io5';
+import { IoIosArrowDroprightCircle } from 'react-icons/io';
 
 export type BrowserProps = {
   handleRef: MutableRefObject<HTMLDivElement>;
+  launchOpts?: { [key: string]: string };
 } & Partial<WindowProps>;
 
 const Browser = ({
@@ -14,11 +23,43 @@ const Browser = ({
   onMaximize,
   onMinimize,
   onFocus,
+  launchOpts,
 }: BrowserProps) => {
   const [currentURL, setCurrentURL] = useState<string>(
-    'https://www.youtube.com/embed/i99UG0MJDwY?si=hgP9fU7dvN2cEOZ9&autoplay=1'
+    launchOpts?.initialURL ||
+      'https://www.youtube.com/embed/i99UG0MJDwY?si=hgP9fU7dvN2cEOZ9&autoplay=1'
   );
+  const [editingURL, setEditingURL] = useState<string>(currentURL);
   const [isEditingURL, setIsEditingURL] = useState<boolean>(false);
+
+  const inputRef = useRef<HTMLInputElement>(null!);
+
+  const beautifiedURL = useMemo(() => {
+    try {
+      return currentURL
+        .split(/https:\/\//)[1]
+        .split('/')[0]
+        .split('www.')[1];
+    } catch {
+      return currentURL;
+    }
+  }, [currentURL]);
+
+  const getHttpfiedURL = () => {};
+  const startChangingUrl = () => {
+    setIsEditingURL(true);
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+  };
+
+  const stopChangingURL = () => {
+    setIsEditingURL(false);
+    setCurrentURL(editingURL);
+    setTimeout(() => {
+      inputRef.current?.blur();
+    }, 100);
+  };
 
   return (
     <div className={styles.fill} onDoubleClick={onFocus}>
@@ -41,8 +82,30 @@ const Browser = ({
           <button>
             <IoLockClosed />
           </button>
-          <button>
-            <span>youtube.com</span>
+
+          <input
+            className={
+              isEditingURL ? styles.focusedInput : styles.unfocusedInput
+            }
+            ref={inputRef}
+            onClick={() => {
+              startChangingUrl();
+            }}
+            defaultValue={beautifiedURL}
+            value={isEditingURL ? editingURL : beautifiedURL}
+            // disabled={!isEditingURL}
+            // onBlur={stopChangingURL}
+            onChange={(e) => {
+              setEditingURL(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.code.toUpperCase() === 'ENTER') {
+                stopChangingURL();
+              }
+            }}
+          />
+          <button onClick={() => stopChangingURL()}>
+            <IoIosArrowDroprightCircle />
           </button>
         </div>
       </div>

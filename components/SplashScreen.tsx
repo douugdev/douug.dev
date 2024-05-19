@@ -115,7 +115,7 @@ const SplashScreen = () => {
     return (
       <div className={styles.canvasContainer}>
         {currentBootTexts.map((txt) => (
-          <span key={txt.replace(/ /, '')}>{txt}</span>
+          <span key={txt}>{txt}</span>
         ))}
       </div>
     );

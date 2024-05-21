@@ -34,11 +34,14 @@ const Code = () => {
   return (
     <div className={styles.windowContainer}>
       <div className={styles.fileExplorer}>
-        <span className={styles.title}>Files:</span>
+        <span className={styles.path}>/home/douugdev/projects</span>
+        {/* <span className={styles.path}></span> */}
         {currentDir?.contents.map((fileOrDir, index) => (
           <button
             key={fileOrDir.name + index}
-            className={styles.button}
+            className={`${styles.button} ${
+              fileOrDir.name === currentFile?.name ? styles.buttonSelected : ''
+            }`}
             onClick={() => {
               if (fileOrDir.type === 'file') {
                 setCurrentFile(fileOrDir as File);

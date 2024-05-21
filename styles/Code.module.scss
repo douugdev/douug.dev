@@ -21,19 +21,33 @@
   color: white;
   padding: 0.5rem 1rem;
   border-right: solid 1px #ffffff23;
+  width: 20%;
 
   .title {
-    margin-bottom: 1rem;
     color: #ffffffc4;
   }
 
+  .path {
+    margin-bottom: 1rem;
+    color: #ffffffa9;
+    font-size: 0.8rem;
+  }
+
   .button {
-    background-color: transparent;
-    padding: 0;
     border: none;
+
+    font-size: 1.05rem;
+    padding: 0.2rem 0.8rem;
     cursor: pointer;
     text-align: left;
+    background-color: transparent;
     color: #ffffffc4;
     font-family: 'Red Hat Mono';
+    border-radius: 0.5rem;
+
+    &Selected {
+      @extend .button;
+      background-color: #ffffff4f;
+    }
   }
 }

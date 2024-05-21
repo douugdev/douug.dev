@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/react';
-import { desktopEnvironment } from 'stores/DE';
+import { desktopEnvironment, wallpaper } from 'stores/DE';
 import styles from 'styles/Desktop.module.scss';
 import { useEffect } from 'react';
 import {
@@ -17,11 +17,13 @@ import Image from 'next/image';
 
 const Window = dynamic(() => import('components/Window'), { ssr: false });
 
-const pinnedDockApps = ['terminal', 'browser'];
+const pinnedDockApps = ['terminal', 'browser', 'music', 'code'];
 
 const computedDockItems = computed(processes, (window) => {
   return window.map((w) => w.appName);
 });
+
+wallpaper.listen(() => {});
 
 const Desktop = () => {
   const de = useStore(desktopEnvironment);
@@ -55,6 +57,7 @@ const Desktop = () => {
           customHandleRef: windowItem.window.handleRef,
           customHandler: !!windowItem.window.hideDefaultHandler,
           isFocused: windowItem.window.isFocused,
+          title: windowItem.window.title,
         };
 
         return (
@@ -67,7 +70,7 @@ const Desktop = () => {
         );
       })}
       <div className={styles.dock}>
-        {removeStringDuplicates([...dockItems, ...pinnedDockApps]).map(
+        {removeStringDuplicates([...pinnedDockApps, ...dockItems]).map(
           (appName) => {
             const dockItem = windows.find((win) => win.appName === appName);
 

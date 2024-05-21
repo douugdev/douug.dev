@@ -199,4 +199,62 @@ export class Directory {
   }
 }
 
-export const hardDrive = new Directory('/', null);
+const initialHardDrive = new Directory('/', null);
+
+initialHardDrive.createNestedDirectories({
+  home: {
+    douugdev: {
+      projects: null,
+    },
+  },
+  etc: null,
+  lib: {
+    python3: null,
+  },
+  tmp: null,
+  usr: null,
+});
+const homeDir = initialHardDrive
+  .findDirectory('home')!
+  .findDirectory('douugdev')!;
+
+homeDir.createFile(
+  'readme.txt',
+  `
+  There's a few commands you can use:
+
+  cd    - Change directories, usage: 'cd /home'
+  mkdir - Create a directory, usage: 'mkdir myDirectory'
+  ls    - List files and directories, usage: 'ls'
+  help  - List available commands (it updates automatically even if I forget to add docs here), usage: 'help'
+  pwd   - Shows your current path, usage: 'pwd'
+  echo  - Just repeats what you type, usage: 'echo Hello world!'
+  clear - Clears the terminal, usage: 'clear'
+  cat   - Displays content from files, usage: 'cat readme.txt'
+  open  - Opens an app, usage: 'open browser'
+
+  It's all a bit buggy at the moment, but a cool PoC!!
+`
+);
+
+const projectsDir = homeDir.findDirectory('projects');
+
+projectsDir?.createFile(
+  'thisWebsite.txt',
+  'This website is a work in progress'
+);
+projectsDir?.createFile('synth.txt', 'type "open synth" to see this project');
+projectsDir?.createFile(
+  'code.ts',
+  `// Welcome to douugIDE
+// If you're still in the terminal, use \`code\` to open it. 
+
+const printSomething = (param: string) => {
+  console.log(param);
+}
+
+printSomething('Hello!!');
+`
+);
+
+export const hardDrive = initialHardDrive;

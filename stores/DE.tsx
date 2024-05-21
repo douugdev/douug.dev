@@ -1,4 +1,4 @@
-import { deepMap } from 'nanostores';
+import { computed, deepMap } from 'nanostores';
 
 export type DesktopEnvironmentType = {
   // TODO: sync between sessions
@@ -12,3 +12,8 @@ export const desktopEnvironment = deepMap<DesktopEnvironmentType>({
     wallpaper: '/pexels-stephan-seeber-1261728.jpg',
   },
 });
+
+export const wallpaper = computed(
+  desktopEnvironment,
+  (de) => de.desktop.wallpaper
+);

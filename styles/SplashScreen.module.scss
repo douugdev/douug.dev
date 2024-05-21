@@ -33,3 +33,17 @@
   width: 0%;
   background-color: white;
 }
+
+.loadingContainer {
+  flex: 1;
+  position: relative;
+}
+
+.bootTexts {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  left: 0;
+  top: 0;
+  opacity: 0.33;
+}

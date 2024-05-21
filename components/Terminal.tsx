@@ -156,6 +156,8 @@ const Terminal = () => {
       'The following commands are available',
       ...Object.keys(mapCommandToFunction),
     ];
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const pwd = useCallback(() => currentDirectory.path, [currentDirectory.path]);
@@ -168,13 +170,19 @@ const Terminal = () => {
       case 'synth':
         launchApp('browser', { initialURL: 'https://synth.douug.dev' });
         return [];
-      // case 'codele':
-      //   launchApp('browser', { initialURL: 'https://codele.douug.dev' });
-      //   return [];
+      case 'code':
+        launchApp('code');
+        return [];
     }
 
-    return ['No such command'];
+    return [`"${args[0]}": No such app or command`];
   }, []);
+  const code = useCallback(
+    (...args: string[]) => {
+      return open('code');
+    },
+    [open]
+  );
 
   const log = useCallback(
     (type: 'info' | 'error', message: string | string[] | string[][]) => {
@@ -208,6 +216,7 @@ const Terminal = () => {
       clear,
       cat,
       open,
+      code,
     }),
     [cd, mkdir, ls, help, pwd, echo, clear, cat, open]
   );
@@ -264,58 +273,6 @@ const Terminal = () => {
   }, [loadingProgress]);
 
   useEffect(() => {
-    if (!hardDrive.contents.length) {
-      hardDrive.createNestedDirectories({
-        home: {
-          douugdev: {
-            projects: null,
-          },
-        },
-        etc: null,
-        lib: {
-          python3: null,
-        },
-        tmp: null,
-        usr: null,
-      });
-      const homeDir = hardDrive
-        .findDirectory('home')!
-        .findDirectory('douugdev')!;
-
-      homeDir.createFile(
-        'readme.txt',
-        `
-        There's a few commands you can use:
-
-        cd    - Change directories, usage: 'cd /home'
-        mkdir - Create a directory, usage: 'mkdir myDirectory'
-        ls    - List files and directories, usage: 'ls'
-        help  - List available commands (it updates automatically even if I forget to add docs here), usage: 'help'
-        pwd   - Shows your current path, usage: 'pwd'
-        echo  - Just repeats what you type, usage: 'echo Hello world!'
-        clear - Clears the terminal, usage: 'clear'
-        cat   - Displays content from files, usage: 'cat readme.txt'
-        open  - Opens an app, usage: 'open browser'
-
-        It's all a bit buggy at the moment, but a cool PoC!!
-      `
-      );
-
-      const projectsDir = homeDir.findDirectory('projects');
-
-      projectsDir?.createFile(
-        'thisWebsite.txt',
-        'This website is a work in progress'
-      );
-      projectsDir?.createFile(
-        'synth.txt',
-        'type "open synth" to see this project'
-      );
-      // projectsDir?.createFile(
-      //   'codele.txt',
-      //   'type "open codele" to see this project'
-      // );
-    }
     startTransition(() => {
       const homeDir = hardDrive
         .findDirectory('home')!

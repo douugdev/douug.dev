@@ -14,6 +14,7 @@ export type ProcessType =
         Component: React.FunctionComponent<
           WindowProps & { launchOpts: { [key: string]: string } }
         >;
+        title?: string;
         hideDefaultHandler?: boolean;
         handleRef?: MutableRefObject<HTMLDivElement>;
         pos: { x: number; y: number };
@@ -61,6 +62,7 @@ export const launchApp = async (
       launchOpts: launchOpts,
       window: {
         Component: appInfo.WindowComponent,
+        title: appInfo.windowTitle,
         hideDefaultHandler: appInfo.hideDefaultHandler,
         handleRef: appInfo.handleRef,
         pos: { x: 100, y: 100 },
@@ -91,7 +93,7 @@ export const minimizeWindow = async (processId: string) => {
 
   processes.set(
     oldProcesses.map((process) => {
-      if (process.processId === processId || process.type === 'background') {
+      if (process.processId !== processId || process.type === 'background') {
         return process;
       }
 
@@ -105,7 +107,7 @@ export const maximizeWindow = async (processId: string) => {
 
   processes.set(
     oldProcesses.map((process) => {
-      if (process.processId === processId || process.type === 'background') {
+      if (process.processId !== processId || process.type === 'background') {
         return process;
       }
 

@@ -55,6 +55,7 @@ export type WindowProps = {
   customHandler?: boolean;
   customHandleRef?: MutableRefObject<HTMLDivElement>;
   isFocused?: boolean;
+  title?: string;
 };
 
 const Window = ({
@@ -68,6 +69,7 @@ const Window = ({
   isFocused,
   customHandler,
   customHandleRef,
+  title,
 }: PropsWithChildren<WindowProps>) => {
   const windowRef = useRef<HTMLDivElement>(null!);
   const handleRef = useRef<HTMLDivElement>(null!);
@@ -95,18 +97,21 @@ const Window = ({
     >
       {!customHandler ? (
         <div ref={handleRef} className={styles.handle}>
-          <button
-            className={styles.windowButtonClose}
-            onClick={() => onClose()}
-          />
-          <button
-            className={styles.windowButtonMinimize}
-            onClick={() => onMinimize()}
-          />
-          <button
-            className={styles.windowButtonMaximize}
-            onClick={() => onMaximize()}
-          />
+          <div className={styles.windowButtonsContainer}>
+            <button
+              className={styles.windowButtonClose}
+              onClick={() => onClose()}
+            />
+            <button
+              className={styles.windowButtonMinimize}
+              onClick={() => onMinimize()}
+            />
+            <button
+              className={styles.windowButtonMaximize}
+              onClick={() => onMaximize()}
+            />
+          </div>
+          {title ? <span className={styles.windowTitle}>{title}</span> : <></>}
         </div>
       ) : (
         <></>

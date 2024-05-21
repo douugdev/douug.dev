@@ -5,6 +5,7 @@ import { AsciiEffect } from 'three-stdlib';
 const AsciiRenderer = ({
   renderIndex = 1,
   characters = '@%*=+: ',
+  color = '#ffffff5f',
   ...options
 }) => {
   // Reactive state
@@ -17,11 +18,11 @@ const AsciiRenderer = ({
     effect.domElement.style.position = 'absolute';
     effect.domElement.style.top = '0px';
     effect.domElement.style.left = '0px';
-    effect.domElement.style.color = '#ffffff5f';
+    effect.domElement.style.color = color;
     effect.domElement.style.backgroundColor = 'transparent';
     effect.domElement.style.pointerEvents = 'none';
     return effect;
-  }, [characters, gl, options]);
+  }, [characters, gl, options, color]);
 
   // Append on mount, remove on unmount
   useEffect(() => {

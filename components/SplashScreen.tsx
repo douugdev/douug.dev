@@ -1,19 +1,12 @@
 'use client';
 
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Mesh, Vector3 } from 'three';
-import {
-  MouseEventHandler,
-  Suspense,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { Mesh } from 'three';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { Text3D } from '@react-three/drei';
 import AsciiRenderer from './AsciiRenderer';
 import styles from 'styles/SplashScreen.module.scss';
 import { bootState } from 'stores/OS';
-import { useStore } from '@nanostores/react';
 
 const bootTexts = [
   '[boot] douugOS - Copyright (c) Douglas Silva',
@@ -76,13 +69,11 @@ const RotatingText: React.FC = () => {
 
 const SplashScreen = () => {
   const [currentBootTexts, setCurrentBootTexts] = useState<string[]>([]);
-  const [loadingProgress, setLoadingProgress] = useState<number>(-1);
+  const [loadingProgress, setLoadingProgress] = useState<number>(0);
 
   useEffect(() => {
     if (currentBootTexts.length == bootTexts.length) {
-      setTimeout(() => {
-        setLoadingProgress(0);
-      }, 1000);
+      return;
     }
     const timeout = setTimeout(() => {
       setCurrentBootTexts((prev) => [...prev, bootTexts[prev.length]]);
@@ -94,10 +85,6 @@ const SplashScreen = () => {
   }, [currentBootTexts]);
 
   useEffect(() => {
-    if (loadingProgress === -1) {
-      return;
-    }
-
     if (loadingProgress === 100) {
       bootState.set('booted');
     }
@@ -111,32 +98,27 @@ const SplashScreen = () => {
     };
   }, [loadingProgress]);
 
-  if (loadingProgress === -1) {
-    return (
-      <div className={styles.canvasContainer}>
+  return (
+    <div className={styles.canvasContainer}>
+      <div className={styles.bootTexts}>
         {currentBootTexts.map((txt) => (
           <span key={txt}>{txt}</span>
         ))}
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.canvasContainer}>
-      <div id="loading-container" style={{ flex: 1, position: 'relative' }}>
-        <Suspense fallback={<h1>Booting...</h1>}>
-          <Canvas className={styles.canvas} gl={{ antialias: false }} dpr={0.2}>
-            <RotatingText />
-            <AsciiRenderer invert resolution={0.25} />
-            <directionalLight />
-          </Canvas>
-        </Suspense>
       </div>
       <div className={styles.loadingBarContainer}>
         <div
           className={styles.loadingBarInner}
           style={{ width: `${loadingProgress}%` }}
         />
+      </div>
+      <div id="loading-container" className={styles.loadingContainer}>
+        <Suspense fallback={<h1>Booting...</h1>}>
+          <Canvas className={styles.canvas} gl={{ antialias: false }} dpr={0.2}>
+            <RotatingText />
+            <AsciiRenderer invert resolution={0.25} color="#fff" />
+            <directionalLight />
+          </Canvas>
+        </Suspense>
       </div>
     </div>
   );

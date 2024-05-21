@@ -9,10 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
     "@nanostores/react": "^0.7.2",
     "@react-three/drei": "^9.17.3",
     "@react-three/fiber": "^8.2.2",
     "@types/three": "^0.142.0",
+    "monaco-editor": "^0.48.0",
     "nanostores": "^0.10.3",
     "next": "^14.2.3",
     "react": "18.2.0",

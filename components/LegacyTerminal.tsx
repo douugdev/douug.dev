@@ -21,8 +21,9 @@ const LegacyTerminal = () => {
   const [loadingProgress, setLoadingProgress] = useState<number>(
     process.env.NODE_ENV === 'production' ? 0 : 100
   );
-  const [currentDirectory, setCurrentDirectory] =
-    useState<Directory>(hardDrive);
+  const [currentDirectory, setCurrentDirectory] = useState<Directory>(
+    hardDrive.get()
+  );
   const [commandInput, setCommandInput] = useState<string>('');
   const [logs, setLogs] = useState<string[]>([
     'Welcome! I\'m Douglas "douugdev" Silva, a front-end developer.',
@@ -69,7 +70,7 @@ const LegacyTerminal = () => {
           throw Error('Invalid path specified.');
         } else if (filename === '/') {
           // Path is absolute
-          tempDirectory = hardDrive;
+          tempDirectory = hardDrive.get();
         } else if (filename === CURRENT_DIRECTORY) {
           // Filename is '.'
           continue;
@@ -218,7 +219,7 @@ const LegacyTerminal = () => {
       open,
       code,
     }),
-    [cd, mkdir, ls, help, pwd, echo, clear, cat, open]
+    [cd, mkdir, ls, help, pwd, echo, clear, cat, open, code]
   );
 
   const runCommand = useCallback(() => {
@@ -275,6 +276,7 @@ const LegacyTerminal = () => {
   useEffect(() => {
     startTransition(() => {
       const homeDir = hardDrive
+        .get()
         .findDirectory('home')!
         .findDirectory('douugdev')!;
       setCurrentDirectory(homeDir);

@@ -24,7 +24,9 @@ const bootTexts = [
   '[dde] systemd disabled',
   '[drivers] sound OK',
   '[drivers] video OK',
-  `[dde] support for useragent: ${navigator.userAgent} OK`,
+  `[dde] support for useragent: ${
+    typeof navigator === 'object' ? navigator?.userAgent : 'Browser'
+  } OK`,
   '[drivers] browser drivers OK',
   '[info] welcome.',
 ];

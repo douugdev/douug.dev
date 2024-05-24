@@ -83,7 +83,9 @@ const Code = ({ pid }: ContentComponentProps) => {
 
   useEffect(() => {
     if (action === 'resizing-file-explorer') {
+      // @ts-expect-error I'll fix the typing sometime in the future...
       document.onmouseup = onMouseUp;
+      // @ts-expect-error
       document.onmousemove = onMouseMove;
     } else {
       document.onmouseup = null;

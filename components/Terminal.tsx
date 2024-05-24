@@ -10,10 +10,10 @@ import { WebLinksAddon } from '@xterm/addon-web-links';
 import { WebglAddon } from '@xterm/addon-webgl';
 import { FitAddon } from '@xterm/addon-fit';
 
-import { xtermjsTheme } from 'styles/external/termTheme';
-import styles from 'styles/Terminal.module.scss';
-import 'styles/globals.scss';
-import 'styles/external/xterm.css';
+import { xtermjsTheme } from '@/styles/external/termTheme';
+import styles from '@/styles/Terminal.module.scss';
+import '@/styles/globals.css';
+import '@/styles/external/xterm.css';
 
 import { configureTerminal } from '@/modules/Terminal';
 import { termColors } from '@/utils/termColors';
@@ -54,9 +54,9 @@ This is an interactive terminal simulator
 you can use to explore my work.
 
 There's a text file inside this folder.
-You can use ${
-  termColors.BgBlack + termColors.Bold + termColors.Italics
-} cat readme.txt ${termColors.Reset} to read it!
+You can use ${termColors.BgWhite + termColors.BgCyan} cat readme.txt ${
+  termColors.Reset
+} to read it!
 `;
 
 const promptPrefix = '$ ';

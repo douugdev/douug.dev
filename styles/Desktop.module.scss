@@ -8,25 +8,31 @@
 
 .dock {
   position: absolute;
-  bottom: 0.5rem;
   left: 50%;
-  transform: translate(-50%);
+  bottom: 0.75rem;
 
   min-width: 10rem;
   height: 5rem;
 
-  background-color: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(20pt);
+  border-radius: 1.75rem;
+  border: 1px solid #f0eaf750;
 
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 1.5rem;
+  background: linear-gradient(
+    153deg,
+    rgba(45, 0, 54, 0.1) 0%,
+    rgba(45, 0, 54, 0) 100%
+  );
+
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(20pt);
 
   overflow: hidden;
 
+  transform: translate(-50%);
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0 0.2rem;
+  padding: 0 1.5rem;
 
   justify-content: center;
 
@@ -41,16 +47,19 @@
   }
 
   &Item {
-    height: 4.5rem;
-    width: 4.5rem;
+    // height: 4.5rem;
+    // width: 4.5rem;
+    margin: 0.25rem 0.25rem;
     padding: 0.5rem;
-    border-radius: 1.5rem;
+    border-radius: 1rem;
 
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: filter 80ms ease-in-out;
-    transition: background-color 80ms ease-in-out;
+
+    transition-property: background-color filter ease-in-out;
+    transition-duration: 100ms;
+    transition-timing-function: ease-in-out;
 
     cursor: pointer;
 
@@ -59,9 +68,9 @@
       background-color: rgba(255, 255, 255, 0.479);
     }
 
-    img {
-      height: 4rem;
-      width: 4rem;
+    .image {
+      height: 3.5rem;
+      width: 3.5rem;
     }
   }
 }

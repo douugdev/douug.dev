@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect } from 'react';
 // Define general type for useWindowSize hook, which includes width and height
 interface Size {

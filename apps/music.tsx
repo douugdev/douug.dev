@@ -1,9 +1,7 @@
 import Music from 'components/Music';
 import { getHundredth } from 'utils/number';
 
-export const WindowComponent = () => {
-  return <Music />;
-};
+export const WindowComponent = Music;
 
 export const appType = 'windowed';
 

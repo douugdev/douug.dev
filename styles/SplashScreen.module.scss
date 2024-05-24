@@ -1,9 +1,12 @@
 .canvas {
   position: absolute;
-  left: 100vw;
+  height: 100vh;
+  width: 100vw;
+  left: 0;
   right: 0;
   bottom: 0;
   top: 0;
+  // background-color: white;
 }
 
 .canvasContainer {
@@ -25,6 +28,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   overflow: hidden;
+  z-index: 2;
 }
 
 .loadingBarInner {
@@ -37,6 +41,7 @@
 .loadingContainer {
   flex: 1;
   position: relative;
+  z-index: 1;
 }
 
 .bootTexts {
@@ -46,4 +51,6 @@
   left: 0;
   top: 0;
   opacity: 0.33;
+  z-index: 2;
+  background-color: transparent;
 }

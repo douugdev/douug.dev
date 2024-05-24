@@ -1,10 +1,9 @@
 'use client';
 
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Mesh } from 'three';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Color, Euler, MathUtils, Mesh, Vector3 } from 'three';
+import { useEffect, useRef, useState } from 'react';
 import { Text3D } from '@react-three/drei';
-import AsciiRenderer from './AsciiRenderer';
 import styles from 'styles/SplashScreen.module.scss';
 import { bootState } from 'stores/OS';
 
@@ -30,16 +29,84 @@ const bootTexts = [
   '[info] welcome.',
 ];
 
-const RotatingText: React.FC = () => {
+const RotatingText: React.FC<{ finished: boolean }> = ({ finished }) => {
   const textRef = useRef<Mesh>(null!);
   const mouseRef = useRef<MouseEvent>(null!);
+  const { scene } = useThree();
+  const [currentState, setCurrentState] = useState<
+    'starting' | 'gaming' | 'finishing' | 'finished'
+  >('starting');
+
+  scene.background = new Color('#000000');
 
   window.addEventListener('mousemove', (ev) => {
     mouseRef.current = ev;
   });
 
+  useEffect(() => {
+    setTimeout(() => {
+      setCurrentState('gaming');
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
+    if (finished) {
+      setCurrentState('finishing');
+      setTimeout(() => {
+        setCurrentState('finished');
+      }, 500);
+    }
+  }, [finished]);
+
   useFrame(({ clock }) => {
     textRef.current.geometry.center();
+
+    if (currentState === 'starting') {
+      textRef.current.position.z = MathUtils.lerp(
+        textRef.current.position.z,
+        -1,
+        0.025
+      );
+
+      if (Array.isArray(textRef.current.material)) return;
+
+      textRef.current.material.opacity = MathUtils.lerp(
+        textRef.current.material.opacity,
+        1,
+        0.1
+      );
+    }
+
+    if (currentState === 'finishing') {
+      textRef.current.rotation.copy(
+        new Euler(
+          MathUtils.lerp(textRef.current.rotation.x, 0, 0.1),
+          MathUtils.lerp(textRef.current.rotation.y, 0, 0.1),
+          MathUtils.lerp(textRef.current.rotation.z, 0, 0.1)
+        )
+      );
+      return;
+    }
+
+    if (currentState === 'finished') {
+      textRef.current.position.copy(
+        new Vector3(
+          MathUtils.lerp(textRef.current.position.x, 0, 0.1),
+          MathUtils.lerp(textRef.current.position.y, 0, 0.1),
+          MathUtils.lerp(textRef.current.position.z, 6, 0.1)
+        )
+      );
+      if (Array.isArray(textRef.current.material)) return;
+
+      textRef.current.material.opacity = MathUtils.lerp(
+        textRef.current.material.opacity,
+        -1,
+        0.1
+      );
+      return;
+    }
+
+    if (currentState !== 'gaming') return;
 
     if (!mouseRef.current?.x || !mouseRef.current?.y) {
       return;
@@ -50,19 +117,26 @@ const RotatingText: React.FC = () => {
     const centeredX = (mouseX - window.innerWidth / 2) / window.innerWidth;
     const centeredY = (mouseY - window.innerHeight / 2) / window.innerHeight;
 
-    textRef.current.rotation.y = centeredX * 1.5;
-    textRef.current.rotation.x = centeredY * 1.5;
+    textRef.current.rotation.copy(
+      new Euler(
+        MathUtils.lerp(textRef.current.rotation.x, centeredY * 2, 0.075),
+        MathUtils.lerp(textRef.current.rotation.y, centeredX * 2, 0.075),
+        MathUtils.lerp(textRef.current.rotation.z, 0, 0.075)
+      )
+    );
   });
 
   return (
     <Text3D
       ref={textRef}
-      bevelSegments={1}
-      position={[0, 0, 0]}
-      font={'/ibmplex.typeface.json'}
+      bevelSegments={10}
+      bevelSize={0.02}
+      bevelEnabled={true}
+      position={[0, 0, 6]}
+      font={'/pacifico.typeface.json'}
     >
       douugOS
-      <meshPhongMaterial color="#ffffff" />
+      <meshNormalMaterial transparent opacity={0} />
     </Text3D>
   );
 };
@@ -86,12 +160,14 @@ const SplashScreen = () => {
 
   useEffect(() => {
     if (loadingProgress === 100) {
-      bootState.set('booted');
+      setTimeout(() => {
+        bootState.set('booted');
+      }, 1000);
     }
 
     const timeout = setTimeout(() => {
       setLoadingProgress((prev) => Math.min(100, prev + 1));
-    }, Math.random() * 100);
+    }, Math.random() * 50);
 
     return () => {
       clearTimeout(timeout);
@@ -112,13 +188,11 @@ const SplashScreen = () => {
         />
       </div>
       <div id="loading-container" className={styles.loadingContainer}>
-        <Suspense fallback={<h1>Booting...</h1>}>
-          <Canvas className={styles.canvas} gl={{ antialias: false }} dpr={0.2}>
-            <RotatingText />
-            <AsciiRenderer invert resolution={0.25} color="#fff" />
-            <directionalLight />
-          </Canvas>
-        </Suspense>
+        <Canvas className={styles.canvas} gl={{ antialias: true }} dpr={1}>
+          <RotatingText finished={loadingProgress === 100} />
+          <directionalLight position={[-10, -10, -10]} intensity={2} />
+          <spotLight position={[0, 2, 10]} intensity={1} />
+        </Canvas>
       </div>
     </div>
   );

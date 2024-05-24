@@ -1,9 +1,13 @@
+'use client';
+
 import type { NextPage } from 'next';
 import { useWindowSize } from 'hooks/useWindowSize';
 import dynamic from 'next/dynamic';
 import { useStore } from '@nanostores/react';
 import { bootState } from 'stores/OS';
 import Desktop from 'components/Desktop';
+import Head from 'next/head';
+import Script from 'next/script';
 
 const SplashScreen = dynamic(() => import('components/SplashScreen'), {
   ssr: false,

@@ -1,5 +1,5 @@
-import { WindowProps } from 'components/Window';
-import { atom } from 'nanostores';
+import { ContentComponentProps, WindowProps } from 'components/Window';
+import { atom, computed } from 'nanostores';
 import { MutableRefObject } from 'react';
 import { v4 } from 'uuid';
 
@@ -11,13 +11,11 @@ export type ProcessType =
       type: 'windowed';
       launchOpts: { [key: string]: string };
       window: {
-        Component: React.FunctionComponent<
-          WindowProps & { launchOpts: { [key: string]: string } }
-        >;
+        Component: React.FunctionComponent<ContentComponentProps>;
         title?: string;
         hideDefaultHandler?: boolean;
         handleRef?: MutableRefObject<HTMLDivElement>;
-        pos: { x: number; y: number };
+        pos: { x?: number; y?: number };
         isFocused: boolean;
         state: 'minimized' | 'open' | 'fullscreen';
         size: {
@@ -36,6 +34,12 @@ export type ProcessType =
       type: 'background';
     };
 
+export const isProcess = (obj: any): obj is ProcessType => {
+  return (
+    obj.appName && obj.processId && obj.iconSource && obj.type && obj.launchOpts
+  );
+};
+
 export type BootStateType = 'booting' | 'booted' | 'suspended' | 'off';
 
 export const bootState = atom<BootStateType>('booting');
@@ -52,36 +56,47 @@ export const launchApp = async (
 
   const appInfo = await import(`apps/${appName}`);
 
-  processes.set([
-    ...oldProcesses,
-    {
-      appName,
-      processId: v4(),
-      iconSource: appInfo.iconSource || `/appIcons/${appName}.png`,
-      type: 'windowed',
-      launchOpts: launchOpts,
-      window: {
-        Component: appInfo.WindowComponent,
-        title: appInfo.windowTitle,
-        hideDefaultHandler: appInfo.hideDefaultHandler,
-        handleRef: appInfo.handleRef,
-        pos: { x: 100, y: 100 },
-        size: {
-          height: appInfo.startHeight ?? 400,
-          startHeight: appInfo.startHeight ?? 400,
-          width: appInfo.startWidth ?? 500,
-          startWidth: appInfo.startWidth ?? 500,
-        },
-        isFocused: true,
-        state: 'open',
+  const defaultOpts = {
+    startHeight: 400,
+    startWidth: 500,
+    x: 200,
+    y: 250,
+  };
+
+  const windowHeight = window.innerHeight;
+  const windowWidth = window.innerWidth;
+
+  const newApp: ProcessType = {
+    appName,
+    processId: v4(),
+    iconSource: appInfo.iconSource || `/appIcons/${appName}.png`,
+    type: 'windowed',
+    launchOpts: launchOpts,
+    window: {
+      Component: appInfo.WindowComponent,
+      title: appInfo.windowTitle,
+      hideDefaultHandler: appInfo.hideDefaultHandler,
+      handleRef: appInfo.handleRef,
+      size: {
+        height: appInfo.startHeight ?? defaultOpts.startHeight,
+        startHeight: appInfo.startHeight ?? defaultOpts.startHeight,
+        width: appInfo.startWidth ?? defaultOpts.startWidth,
+        startWidth: appInfo.startWidth ?? defaultOpts.startWidth,
       },
+      pos: {
+        x: windowWidth / 2 - (appInfo.startWidth / 2 ?? 0),
+        y: windowHeight / 2 - (appInfo.startHeight / 2 ?? 0),
+      },
+      isFocused: true,
+      state: 'open',
     },
-  ]);
+  };
+
+  processes.set([newApp, ...oldProcesses]);
 };
 
-export const closeWindow = async (processId: string) => {
+export const killProcess = async (processId: string) => {
   const oldProcesses = processes.get();
-  console.log(oldProcesses, processId);
 
   processes.set(
     oldProcesses.filter((process) => process.processId !== processId)
@@ -118,18 +133,59 @@ export const maximizeWindow = async (processId: string) => {
 
 export const focusWindow = async (processId: string) => {
   const oldProcesses = processes.get();
-  console.log(processId);
-  processes.set(
-    oldProcesses.map((process) => {
-      if (process.type === 'background') {
-        return process;
+  const process = getProcess(processId).get();
+
+  if (!process || process.type === 'background') {
+    throw new Error('Tried to focus on dead process/window');
+  }
+
+  processes.set([
+    { ...process, window: { ...process.window, isFocused: true } },
+    ...oldProcesses
+      .map((process) => {
+        if (process.type === 'background') {
+          return process;
+        }
+
+        if (process.processId !== processId) {
+          return {
+            ...process,
+            window: { ...process.window, isFocused: false },
+          };
+        }
+
+        return null;
+      })
+      .filter(<T,>(p: T | null): p is T => p !== null),
+  ]);
+};
+
+export const getProcess = (processId: string) => {
+  return computed(processes, (currProcesses) =>
+    currProcesses.find((p) => p.processId === processId)
+  );
+};
+
+export const setProcess = (processId: string, newProcess: ProcessType) => {
+  return processes.set(
+    processes.get().map((p) => {
+      if (p.processId !== processId) {
+        return p;
       }
 
-      if (process.processId !== processId) {
-        return { ...process, window: { ...process.window, isFocused: false } };
-      }
-
-      return { ...process, window: { ...process.window, isFocused: true } };
+      return newProcess;
     })
   );
+};
+
+export const getSafeProcessInfo = (pid: string) => {
+  const oldProcess = getProcess(pid).get();
+
+  if (!oldProcess || oldProcess.type === 'background') {
+    throw new Error(
+      'Tried getting window info from background or unavailable process'
+    );
+  }
+
+  return oldProcess;
 };

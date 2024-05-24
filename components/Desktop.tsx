@@ -1,15 +1,10 @@
+'use client';
+
 import { useStore } from '@nanostores/react';
 import { desktopEnvironment, wallpaper } from 'stores/DE';
 import styles from 'styles/Desktop.module.scss';
 import { useEffect } from 'react';
-import {
-  closeWindow,
-  focusWindow,
-  launchApp,
-  maximizeWindow,
-  minimizeWindow,
-  processes,
-} from 'stores/OS';
+import { launchApp, processes } from 'stores/OS';
 import dynamic from 'next/dynamic';
 import { computed } from 'nanostores';
 import { removeStringDuplicates } from 'utils/array';
@@ -40,33 +35,15 @@ const Desktop = () => {
       className={styles.desktop}
       style={{ backgroundImage: `url(${de.desktop.wallpaper})` }}
     >
-      {windows.map((windowItem) => {
-        if (
-          windowItem.type === 'background' ||
-          windowItem.window.state === 'minimized'
-        )
-          return <></>;
-
-        const defaultWindowProps = {
-          onClose: () => closeWindow(windowItem.processId),
-          onMaximize: () => maximizeWindow(windowItem.processId),
-          onMinimize: () => minimizeWindow(windowItem.processId),
-          onFocus: () => focusWindow(windowItem.processId),
-          startHeight: windowItem.window.size.startHeight,
-          startWidth: windowItem.window.size.startWidth,
-          customHandleRef: windowItem.window.handleRef,
-          customHandler: !!windowItem.window.hideDefaultHandler,
-          isFocused: windowItem.window.isFocused,
-          title: windowItem.window.title,
-        };
+      {windows.toReversed().map((windowItem) => {
+        if (windowItem.type === 'background') return <></>;
 
         return (
-          <Window key={windowItem.processId} {...defaultWindowProps}>
-            <windowItem.window.Component
-              launchOpts={windowItem.launchOpts}
-              {...defaultWindowProps}
-            />
-          </Window>
+          <Window
+            key={windowItem.processId}
+            pid={windowItem.processId}
+            ContentComponent={windowItem.window.Component}
+          />
         );
       })}
       <div className={styles.dock}>
@@ -85,9 +62,11 @@ const Desktop = () => {
                 onClick={() => launchApp(appName)}
               >
                 <Image
+                  className={styles.image}
                   src={dockItem?.iconSource ?? `/appIcons/${appName}.png`}
-                  width={200}
-                  height={200}
+                  width={500}
+                  height={500}
+                  objectFit=""
                   alt="dock-item"
                 />
               </div>

@@ -1,11 +1,28 @@
+'use client';
+
+import { getSafeProcessInfo, processes } from '@/stores/OS';
 import Editor, { Monaco, useMonaco } from '@monaco-editor/react';
+import { useStore } from '@nanostores/react';
 import { hardDrive, File, Directory } from 'modules/FileSystem';
 import { editor } from 'monaco-editor';
-import { useEffect, useRef, useState } from 'react';
+import {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styles from 'styles/Code.module.scss';
-import { codeTheme } from 'styles/codeTheme';
+import { codeTheme } from 'styles/external/codeTheme';
+import { ContentComponentProps } from './Window';
 
-const Code = () => {
+const Code = ({ pid }: ContentComponentProps) => {
+  const fileExplorerRef = useRef<HTMLDivElement>(null!);
+
+  const _ = useStore(processes);
+
+  const process = getSafeProcessInfo(pid);
+
   const monacoRef = useRef<Monaco>(null!);
 
   const handleEditorDidMount = (
@@ -20,8 +37,63 @@ const Code = () => {
   const [currentDir, setCurrentDir] = useState<Directory>();
   const [currentFile, setCurrentFile] = useState<File>();
 
+  const [prevMouseX, setPrevMouseX] = useState<number>(0);
+  const [prevMouseY, setPrevMouseY] = useState<number>(0);
+
+  const [fileExplorerWidth, setFileExplorerWidth] = useState<number>(
+    process.window.size.width / 3
+  );
+
+  const [action, setAction] = useState<'resizing-file-explorer' | 'idle'>(
+    'idle'
+  );
+
+  const onMouseUp: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+    e.preventDefault();
+    setAction('idle');
+  }, []);
+
+  const onMouseDown: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+    console.log('onMouseDownCalled');
+    e.preventDefault();
+    setPrevMouseX(e.clientX);
+    setPrevMouseY(e.clientY);
+    setAction('resizing-file-explorer');
+  }, []);
+
+  const onMouseMove: MouseEventHandler<HTMLDivElement> = useCallback(
+    (e) => {
+      switch (action) {
+        case 'resizing-file-explorer':
+          e.preventDefault();
+
+          const xMouseDiff = prevMouseX - e.clientX;
+          // const yMouseDiff = prevMouseY - e.clientY;
+
+          setPrevMouseX(e.clientX);
+          // setPrevMouseY(e.clientY);
+
+          console.log(xMouseDiff, fileExplorerWidth);
+          setFileExplorerWidth((prev) => prev - xMouseDiff);
+          break;
+      }
+    },
+    [action, fileExplorerWidth, prevMouseX]
+  );
+
+  useEffect(() => {
+    if (action === 'resizing-file-explorer') {
+      document.onmouseup = onMouseUp;
+      document.onmousemove = onMouseMove;
+    } else {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  });
+
   useEffect(() => {
     const currentDirectory = hardDrive
+      .get()
       .findDirectory('home')!
       .findDirectory('douugdev')!
       .findDirectory('projects');
@@ -29,13 +101,17 @@ const Code = () => {
     setCurrentDir(currentDirectory);
     setCurrentFile(currentDirectory!.findFile('code.js')!);
   }, []);
-  console.log(currentFile?.name.includes('.js') ? 'javascript' : 'text');
 
   return (
     <div className={styles.windowContainer}>
-      <div className={styles.fileExplorer}>
+      <div
+        ref={fileExplorerRef}
+        className={styles.fileExplorer}
+        style={{
+          width: fileExplorerWidth,
+        }}
+      >
         <span className={styles.path}>/home/douugdev/projects</span>
-        {/* <span className={styles.path}></span> */}
         {currentDir?.contents.map((fileOrDir, index) => (
           <button
             key={fileOrDir.name + index}
@@ -52,7 +128,15 @@ const Code = () => {
           </button>
         ))}
       </div>
-      <div className={styles.codeContainer}>
+      <div onMouseDown={onMouseDown} className={styles.sideHandle}>
+        <div className={styles.hitbox} />
+      </div>
+      <div
+        className={styles.codeContainer}
+        style={{
+          width: Math.max(process.window.size.width - fileExplorerWidth),
+        }}
+      >
         <Editor
           height="100%"
           width="100%"
@@ -73,7 +157,6 @@ const Code = () => {
             setCurrentFile(currentFile);
           }}
         />
-        <div id="vim-status-bar" />
       </div>
     </div>
   );

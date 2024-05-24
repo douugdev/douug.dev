@@ -1,5 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
+import { Color } from 'three';
 import { AsciiEffect } from 'three-stdlib';
 
 const AsciiRenderer = ({
@@ -19,7 +20,7 @@ const AsciiRenderer = ({
     effect.domElement.style.top = '0px';
     effect.domElement.style.left = '0px';
     effect.domElement.style.color = color;
-    effect.domElement.style.backgroundColor = 'transparent';
+    effect.domElement.style.backgroundColor = 'black';
     effect.domElement.style.pointerEvents = 'none';
     return effect;
   }, [characters, gl, options, color]);
@@ -38,7 +39,7 @@ const AsciiRenderer = ({
   // Set size
   useEffect(() => {
     effect.setSize(size.width, size.height);
-  }, [effect, size]);
+  }, [effect, scene, size]);
 
   // Take over render-loop (that is what the index is for)
   useFrame((state) => {

@@ -1,3 +1,5 @@
+'use client';
+
 import {
   MutableRefObject,
   useEffect,
@@ -8,25 +10,25 @@ import {
 } from 'react';
 import styles from 'styles/Browser.module.scss';
 import windowStyles from 'styles/Window.module.scss';
-import { WindowProps } from './Window';
 import { IoLockClosed } from 'react-icons/io5';
 import { IoIosArrowDroprightCircle } from 'react-icons/io';
-
-export type BrowserProps = {
-  handleRef: MutableRefObject<HTMLDivElement>;
-  launchOpts?: { [key: string]: string };
-} & Partial<WindowProps>;
+import { ContentComponentProps } from './Window';
+import { getProcess, getSafeProcessInfo, processes } from '@/stores/OS';
+import { useStore } from '@nanostores/react';
 
 const Browser = ({
-  handleRef,
-  onClose,
-  onMaximize,
-  onMinimize,
-  onFocus,
-  launchOpts,
-}: BrowserProps) => {
+  onMouseDown,
+  close,
+  maximize,
+  minimize,
+  pid,
+}: ContentComponentProps) => {
+  const _ = useStore(processes);
+
+  const process = getSafeProcessInfo(pid);
+
   const [currentURL, setCurrentURL] = useState<string>(
-    launchOpts?.initialURL ||
+    process.launchOpts?.initialURL ||
       'https://www.youtube.com/embed/dQw4w9WgXcQ?si=zCVyrSU3qkd5cJNG&autoplay=1'
   );
   const [editingURL, setEditingURL] = useState<string>(currentURL);
@@ -62,20 +64,22 @@ const Browser = ({
   };
 
   return (
-    <div className={styles.fill} onDoubleClick={onFocus}>
-      <div className={windowStyles.handle} ref={handleRef}>
+    <div className={styles.fill}>
+      <div className={windowStyles.handle} onMouseDown={onMouseDown}>
         <div className={windowStyles.windowButtonsContainer}>
           <button
             className={windowStyles.windowButtonClose}
-            onClick={() => onClose?.()}
+            onClick={() => close?.()}
           />
           <button
             className={windowStyles.windowButtonMinimize}
-            onClick={() => onMinimize?.()}
+            onClick={() => minimize?.()}
           />
           <button
             className={windowStyles.windowButtonMaximize}
-            onClick={() => onMaximize?.()}
+            onClick={() =>
+              maximize?.(process.window.state === 'fullscreen' ? false : true)
+            }
           />
         </div>
         <div className={styles.urlBar}>
@@ -110,6 +114,7 @@ const Browser = ({
         </div>
       </div>
       <iframe
+        is="x-frame-bypass"
         src={currentURL}
         title="YouTube video player"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

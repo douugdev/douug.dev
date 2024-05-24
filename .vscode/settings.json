@@ -1,5 +1,15 @@
 {
   "prettier.tabWidth": 2,
   "editor.tabSize": 2,
-  "editor.detectIndentation": false
+  "editor.detectIndentation": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
+  // "eslint.options": {
+  //   "configFile": ""
+  // },
+  // "eslint.validate": [
+  //   "javascript",
+  //   "javascriptreact",
+  //   "html",
+  //   "typescriptreact"
+  // ]
 }

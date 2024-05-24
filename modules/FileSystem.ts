@@ -1,3 +1,5 @@
+import { atom } from 'nanostores';
+
 type NestedDirectories = { [key: string]: null | NestedDirectories };
 export type Permission = typeof READ | typeof WRITE | typeof EXECUTE;
 export const READ = 'r';
@@ -257,4 +259,4 @@ printSomething('Hello!!');
 `
 );
 
-export const hardDrive = initialHardDrive;
+export const hardDrive = atom(initialHardDrive);

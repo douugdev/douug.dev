@@ -1,9 +1,7 @@
 import Code from 'components/Code';
 import { getHundredth } from 'utils/number';
 
-export const WindowComponent = () => {
-  return <Code />;
-};
+export const WindowComponent = Code;
 
 export const appType = 'windowed';
 

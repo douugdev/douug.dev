@@ -1,20 +1,17 @@
-.fill {
+@import '@xterm/xterm/css/xterm.css';
+
+.loading {
   height: 100%;
   width: 100%;
   flex: 1;
+
+  background-color: #00000050;
+  backdrop-filter: blur(30pt);
 }
 
 .terminal {
-  background-color: #00000050;
-  color: white;
-  flex: 1;
   height: 100%;
   width: 100%;
-  padding: 2rem;
-  backdrop-filter: blur(30pt);
-  overflow-y: auto;
-  overflow-x: hidden;
-  z-index: 9;
 }
 
 .logsContainer {

@@ -16,9 +16,11 @@ import {
   useEffect,
   useRef,
   useState,
+  MouseEvent,
 } from 'react';
 import styles from 'styles/Window.module.scss';
 import desktopStyles from 'styles/Desktop.module.scss';
+import useMousePosition from '@/hooks/useMousePosition';
 
 export type ContentComponentProps = {
   pid: string;
@@ -48,11 +50,13 @@ PropsWithChildren<WindowProps>) => {
   }
   const windowRef = useRef<HTMLDivElement>(null!);
 
+  const { x, y } = useMousePosition();
   const [changeAction, setChangeAction] = useState<
     'idle' | 'dragging' | 'resizing'
   >('idle');
   const [mouseX, setMouseX] = useState<number>(0);
   const [mouseY, setMouseY] = useState<number>(0);
+
   const [maxThroughSnapping, setMaxThroughSnapping] = useState<'top'>();
 
   const close = () => {
@@ -123,116 +127,117 @@ PropsWithChildren<WindowProps>) => {
     [maximize, processInfo.window.state]
   );
 
-  const onMouseMove: MouseEventHandler<HTMLDivElement> = useCallback(
-    (e) => {
-      switch (changeAction) {
-        case 'dragging':
-          e.preventDefault();
-          const oldProcess = getProcess(pid).get();
-          if (!oldProcess || oldProcess.type === 'background') {
-            return;
-          }
-          // If you move more than this amount, the snap disables
-          const MOUSE_OFFSET = 45; // Px
+  const onMouseMove = useCallback(() => {
+    switch (changeAction) {
+      case 'dragging':
+        const oldProcess = getProcess(pid).get();
+        if (!oldProcess || oldProcess.type === 'background') {
+          return;
+        }
+        // If you move more than this amount, the snap disables
+        const MOUSE_OFFSET = 45; // Px
 
-          // If true, you can´t move windows out of the top bounding box
-          const FIXED_TOP_Y_SNAPPING = true;
+        // If true, you can´t move windows out of the top bounding box
+        const FIXED_TOP_Y_SNAPPING = true;
 
-          const xMouseDiff = mouseX - e.clientX;
-          const yMouseDiff = mouseY - e.clientY;
+        const xMouseDiff = mouseX - x;
+        const yMouseDiff = mouseY - y;
 
-          const { left, top, bottom, right } =
-            windowRef.current.getBoundingClientRect();
+        const { left, top, bottom, right } =
+          windowRef.current.getBoundingClientRect();
 
-          const isHittingCeiling = isBetween(top, -1000, 1, true);
+        const isHittingCeiling = isBetween(top, -1000, 1, true);
 
-          if (isBetween(e.clientY, -1000, 1, true)) {
-            // setIsDragging(false);
-            setMaxThroughSnapping('top');
-          } else {
-            setMaxThroughSnapping(undefined);
-          }
+        if (isBetween(y, -1000, 1, true)) {
+          // setIsDragging(false);
+          setMaxThroughSnapping('top');
+        } else {
+          setMaxThroughSnapping(undefined);
+        }
 
-          // Snap to horizontal window borders
-          const shouldSnapToXBorder =
-            (isBetween(left, -1, 1, true) ||
-              isBetween(
-                right,
-                window.innerWidth + 1,
-                window.innerWidth - 1,
-                true
-              )) &&
-            Math.abs(xMouseDiff) < MOUSE_OFFSET;
+        // Snap to horizontal window borders
+        const shouldSnapToXBorder =
+          (isBetween(left, -1, 1, true) ||
+            isBetween(
+              right,
+              window.innerWidth + 1,
+              window.innerWidth - 1,
+              true
+            )) &&
+          Math.abs(xMouseDiff) < MOUSE_OFFSET;
 
-          // Snap to vertical window borders
-          const shouldSnapToYBorder = (() => {
-            const shouldReleaseSnapping = !(
-              (FIXED_TOP_Y_SNAPPING ? -yMouseDiff : Math.abs(yMouseDiff)) <
-              MOUSE_OFFSET
-            );
-            if (shouldReleaseSnapping) {
-              return false;
-            }
-
-            if (isHittingCeiling) {
-              return true;
-            }
-
-            if (
-              isBetween(
-                bottom,
-                window.innerHeight + 1,
-                window.innerHeight - 1,
-                true
-              ) &&
-              !FIXED_TOP_Y_SNAPPING
-            ) {
-              return true;
-            }
-          })();
-
-          if (!shouldSnapToXBorder) {
-            setMouseX(e.clientX);
+        // Snap to vertical window borders
+        const shouldSnapToYBorder = (() => {
+          const shouldReleaseSnapping = !(
+            (FIXED_TOP_Y_SNAPPING ? -yMouseDiff : Math.abs(yMouseDiff)) <
+            MOUSE_OFFSET
+          );
+          if (shouldReleaseSnapping) {
+            return false;
           }
 
-          if (!shouldSnapToYBorder) {
-            setMouseY(e.clientY);
+          if (isHittingCeiling) {
+            return true;
           }
 
-          setProcess(pid, {
-            ...oldProcess,
-            window: {
-              ...oldProcess.window,
-              pos: {
-                x:
-                  windowRef.current.offsetLeft -
-                  (!shouldSnapToXBorder ? xMouseDiff : 0),
-                y: !shouldSnapToYBorder
-                  ? windowRef.current.offsetTop - yMouseDiff
-                  : 0,
-              },
+          if (
+            isBetween(
+              bottom,
+              window.innerHeight + 1,
+              window.innerHeight - 1,
+              true
+            ) &&
+            !FIXED_TOP_Y_SNAPPING
+          ) {
+            return true;
+          }
+        })();
+
+        if (!shouldSnapToXBorder) {
+          setMouseX(x);
+        }
+        if (!shouldSnapToYBorder) {
+          setMouseY(y);
+        }
+
+        setProcess(pid, {
+          ...oldProcess,
+          window: {
+            ...oldProcess.window,
+            pos: {
+              x:
+                windowRef.current.offsetLeft -
+                (!shouldSnapToXBorder ? xMouseDiff : 0),
+              y: !shouldSnapToYBorder
+                ? windowRef.current.offsetTop - yMouseDiff
+                : 0,
             },
-          });
-          break;
-        case 'resizing':
-          break;
-      }
-    },
-    [changeAction, mouseX, mouseY, pid]
-  );
+          },
+        });
+        break;
+      case 'resizing':
+        break;
+    }
+  }, [changeAction, mouseX, mouseY, pid, x, y]);
+
+  useEffect(() => {
+    const listener: MouseEventHandler<HTMLDivElement> = (e) => {
+      onMouseUp(e);
+    };
+    if (changeAction !== 'idle') {
+      // @ts-expect-error
+      document.addEventListener('mouseup', listener);
+    } else {
+      // @ts-expect-error
+      document.removeEventListener('mouseup', listener);
+    }
+  }, [changeAction, onMouseUp]);
 
   useEffect(() => {
     if (changeAction !== 'idle') {
-      console.log('changed mouse listeners');
-      // @ts-expect-error I'll fix the typing sometime in the future...
-      document.onmouseup = onMouseUp;
-      // @ts-expect-error
-      document.onmousemove = onMouseMove;
-    } else {
-      document.onmouseup = null;
-      document.onmousemove = null;
+      onMouseMove();
     }
-  }, [changeAction, onMouseUp, onMouseMove, mouseX, mouseY]);
+  }, [changeAction, onMouseMove]);
 
   useEffect(() => {
     if (processInfo.window.state === 'fullscreen') {
@@ -277,10 +282,6 @@ PropsWithChildren<WindowProps>) => {
         ...oldProcess,
         window: {
           ...oldProcess.window,
-          // pos: {
-          //   x: window.innerWidth / 2,
-          //   y: window.innerHeight / 2,
-          // },
           size: {
             ...oldProcess.window.size,
             width: oldProcess.window.size.startWidth,
@@ -290,10 +291,6 @@ PropsWithChildren<WindowProps>) => {
       });
     }
   }, [pid, processInfo.window.state]);
-
-  useEffect(() => {
-    // TODO: display preview of maximizing
-  }, [maxThroughSnapping]);
 
   useEffect(() => {
     const { width } = processInfo.window.size;

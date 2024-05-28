@@ -1,3 +1,5 @@
+// TODO: This file is a complete mess, needs a rewrite ASAP
+
 import { Terminal } from '@xterm/xterm';
 import ansiEscapes, { cursorLeft, cursorMove } from 'ansi-escapes';
 import { removeByIndex } from '@/utils/string';
@@ -11,6 +13,14 @@ import {
 } from './FileSystem';
 import { atom } from 'nanostores';
 import stripAnsi from 'strip-ansi';
+
+export type WASM = {
+  cwrap: (
+    funcName: string,
+    paramType: string,
+    paramTypes: string[]
+  ) => (param: string) => Promise<string>;
+};
 
 export const startingDir = () => {
   return hardDrive.get().findDirectory('home')!.findDirectory('douugdev')!;
@@ -28,6 +38,7 @@ export const configureTerminal = (
   let historyIndex = -1;
   let previousCursorPosition = 0;
   let command = '';
+  let wasm: WASM;
 
   let currentDir = startingDir();
 
@@ -331,6 +342,46 @@ export const configureTerminal = (
       },
       description: 'Makes an HTTP request',
     },
+    // dlang: {
+    //   f: (...args: string[]) => {
+    //     const filePath = args[0];
+
+    //     const file = currentDir.findFile(filePath);
+    //     console.log(file);
+    //     if (!file || !file?.read()) {
+    //       term.writeln(`dlang: ${filePath} is empty or does not exist`);
+    //       prompt();
+    //       return;
+    //     }
+
+    //     let tmpconsole = console.log.bind(console);
+    //     console.log = term.writeln.bind(term);
+    //     // const Module = require('./dlang.js');
+    //     try {
+    //       if (typeof (window as any).DLANG === 'function' && !wasm) {
+    //         (window as any).DLANG().then((_wasm: WASM) => {
+    //           wasm = _wasm;
+
+    //           const compile = wasm.cwrap('compile', 'string', ['string']);
+
+    //           compile(file.read());
+
+    //           prompt();
+    //         });
+    //       } else {
+    //         const compile = wasm.cwrap('compile', 'string', ['string']);
+    //         compile(file?.read());
+
+    //         prompt();
+    //       }
+    //     } finally {
+    //       console.log = tmpconsole.bind(console);
+    //     }
+
+    //     return 0;
+    //   },
+    //   description: 'Makes an HTTP request',
+    // },
   };
 
   const runCommand = (term: Terminal, text: string) => {

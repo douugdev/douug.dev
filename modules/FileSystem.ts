@@ -245,6 +245,21 @@ projectsDir?.createFile(
   'thisWebsite.txt',
   'This website is a work in progress'
 );
+
+// Dlang is too crude to be added yet
+// I need to write a lexer and parser from scratch!!
+
+// projectsDir?.createFile(
+//   'example.doug',
+//   `// Dlang is the language of the gods
+// // ...or devils?
+
+// number doug() {
+//   console_log("What???\\n");
+//   console_log("%d\\n", (3 * (1 + 2)) - 5);
+//   gives 1;
+// }`
+// );
 projectsDir?.createFile('synth.txt', 'type "open synth" to see this project');
 projectsDir?.createFile(
   'code.ts',

@@ -151,7 +151,13 @@ const Code = ({ pid }: ContentComponentProps) => {
             cursorBlinking: 'smooth',
           }}
           // defaultLanguage="text"
-          language={currentFile?.name.includes('.ts') ? 'typescript' : 'text'}
+          language={
+            currentFile?.name.includes('.ts')
+              ? 'typescript'
+              : currentFile?.name.includes('.doug')
+              ? 'c'
+              : 'text'
+          }
           onMount={handleEditorDidMount}
           value={currentFile?.read() ?? ''}
           onChange={(value) => {

@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import 'styles/globals.css';
 
 export default function RootLayout({
@@ -5,9 +6,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body className="theme-dark">{children}</body>
-    </html>
-  );
+  return <>{children}</>;
 }

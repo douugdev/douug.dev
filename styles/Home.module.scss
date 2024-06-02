@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.bgImage {
+  z-index: -100;
+  position: absolute;
+  height: 105vh;
+  width: 105vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: url('/bg-cafe.png');
+  filter: blur(8pt);
+}

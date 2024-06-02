@@ -145,7 +145,7 @@ export const configureTerminal = (
       f: () => {
         term.writeln(
           [
-            'Welcome to douugOS! Here are some commands you can use:',
+            'Welcome to coffeeOS! Here are some commands you can use:',
             '',
             ...Object.keys(commands).map((e) =>
               formatMessage(e, commands[e as keyof typeof commands].description)
@@ -342,46 +342,6 @@ export const configureTerminal = (
       },
       description: 'Makes an HTTP request',
     },
-    // dlang: {
-    //   f: (...args: string[]) => {
-    //     const filePath = args[0];
-
-    //     const file = currentDir.findFile(filePath);
-    //     console.log(file);
-    //     if (!file || !file?.read()) {
-    //       term.writeln(`dlang: ${filePath} is empty or does not exist`);
-    //       prompt();
-    //       return;
-    //     }
-
-    //     let tmpconsole = console.log.bind(console);
-    //     console.log = term.writeln.bind(term);
-    //     // const Module = require('./dlang.js');
-    //     try {
-    //       if (typeof (window as any).DLANG === 'function' && !wasm) {
-    //         (window as any).DLANG().then((_wasm: WASM) => {
-    //           wasm = _wasm;
-
-    //           const compile = wasm.cwrap('compile', 'string', ['string']);
-
-    //           compile(file.read());
-
-    //           prompt();
-    //         });
-    //       } else {
-    //         const compile = wasm.cwrap('compile', 'string', ['string']);
-    //         compile(file?.read());
-
-    //         prompt();
-    //       }
-    //     } finally {
-    //       console.log = tmpconsole.bind(console);
-    //     }
-
-    //     return 0;
-    //   },
-    //   description: 'Makes an HTTP request',
-    // },
   };
 
   const runCommand = (term: Terminal, text: string) => {

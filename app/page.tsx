@@ -1,32 +1,21 @@
-'use client';
-
-import type { NextPage } from 'next';
-import { useWindowSize } from 'hooks/useWindowSize';
-import dynamic from 'next/dynamic';
-import { useStore } from '@nanostores/react';
-import { bootState } from 'stores/OS';
-import Desktop from 'components/Desktop';
-
-const SplashScreen = dynamic(() => import('components/SplashScreen'), {
-  ssr: false,
-});
+import type { NextPage } from 'next/types';
+import QuoteCard from '../components/QuoteCard';
+import styles from '../styles/Home.module.scss';
+import Image from 'next/image';
 
 const Home: NextPage = () => {
-  const { width } = useWindowSize();
-  const env = process.env.NODE_ENV;
-
-  const boot = useStore(bootState);
-
-  // TODO: pretty obvious
-  if (env !== 'development' && width && width < 800) {
-    return <h1>This website is not made for cellphones... yet.</h1>;
-  }
-
-  if (boot === 'booting' && env !== 'development') {
-    return <SplashScreen />;
-  }
-
-  return <Desktop />;
+  return (
+    <div className={styles.container}>
+      <Image
+        className={styles.bgImage}
+        alt="Background coffee shop"
+        src="/bg-cafe-preblurred.jpg"
+        width={1920}
+        height={1080}
+      />
+      <QuoteCard />
+    </div>
+  );
 };
 
 export default Home;

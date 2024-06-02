@@ -1,0 +1,160 @@
+@use 'utils/theme' as *;
+
+.card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+
+  border: solid 2px rgba(139, 139, 139, 0.3);
+  border-radius: 2rem;
+
+  @include themify($themes) {
+    background-color: themed('backgroundColorThird');
+  }
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  padding: 3rem 4rem;
+
+  backdrop-filter: blur(12pt);
+  width: 80vw;
+  max-width: 60rem;
+  height: 70vh;
+
+  font-family: 'Red Hat Display';
+
+  .image {
+    width: 15rem;
+    height: 100%;
+    justify-content: center;
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: wheat;
+    background-image: url('/coffee-keyboard.jpg');
+    background-size: cover;
+    background-position: 60%;
+  }
+
+  .rightContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    text-align: right;
+
+    height: 100%;
+    flex: 1;
+
+    padding: 1rem 0rem;
+
+    @include themify($themes) {
+      color: themed('textColorFull');
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28pt;
+      font-weight: bold;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 12pt;
+      font-weight: lighter;
+
+      @include themify($themes) {
+        color: themed('textColorHalf');
+      }
+    }
+
+    .linksContainer {
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+    }
+
+    .quoteContainer {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: center;
+
+      .quote {
+        margin: 0;
+        margin-bottom: 1.5rem;
+
+        font-family: 'Roboto Serif';
+        font-size: 18pt;
+        position: relative;
+
+        .quoteAuthor {
+          font-family: 'Roboto Serif';
+          font-style: italic;
+        }
+
+        .quotationMark {
+          font-family: 'Roboto Serif';
+          font-size: 90pt;
+          position: absolute;
+          @include themify($themes) {
+            color: themed('textColorThird');
+          }
+
+          &Start {
+            @extend .quotationMark;
+            top: -2.5rem;
+            right: 9rem;
+          }
+          &End {
+            @extend .quotationMark;
+            top: 3rem;
+            right: calc(-1rem);
+          }
+        }
+      }
+    }
+
+    footer {
+      margin-top: 10px;
+      font-size: 14px;
+      @include themify($themes) {
+        color: themed('textColorHalf');
+      }
+    }
+
+    .bootButton {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+
+      width: 20rem;
+
+      border: solid 2px rgba(139, 139, 139, 0.3);
+      border-radius: 1.25rem;
+
+      padding: 1rem 2rem;
+
+      cursor: pointer;
+
+      @include themify($themes) {
+        background-color: themed('backgroundColorThird');
+        color: themed('textColorFull');
+      }
+
+      font-size: 12pt;
+      font-weight: lighter;
+
+      label {
+        cursor: pointer;
+      }
+
+      .icon {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+  }
+}

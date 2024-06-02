@@ -6,11 +6,19 @@ import { PiCoffeeBean } from 'react-icons/pi';
 import { FaGithub } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { FaSquareXTwitter } from 'react-icons/fa6';
+import Image from 'next/image';
+import cappuccino from '@/static/coffee-keyboard.jpg';
 
 const QuoteCard = () => {
   return (
     <div className={styles.card}>
-      <div className={styles.image} />
+      <Image
+        src={cappuccino}
+        alt="A cappuccino with latte art and a computer behind it"
+        className={styles.image}
+        placeholder="blur"
+        priority
+      />
       <div className={styles.rightContainer}>
         <h1>Douglas Silva</h1>
         <h3>Software Engineer</h3>
@@ -43,7 +51,11 @@ const QuoteCard = () => {
             <cite>Time Enough for Love</cite>
           </footer>
         </blockquote>
-        <Link href="/coffeeos" className={styles.bootButton}>
+        <Link
+          href="/coffeeos"
+          className={styles.bootButton}
+          aria-label="Boot virtual coffee OS button"
+        >
           <label>
             Boot <b>coffeeOS</b>
           </label>

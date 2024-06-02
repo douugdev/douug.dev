@@ -9,7 +9,7 @@ import { FaSquareXTwitter } from 'react-icons/fa6';
 import Image from 'next/image';
 import cappuccino from '@/static/coffee-keyboard.jpg';
 
-const QuoteCard = () => {
+const QuoteCard = async () => {
   return (
     <div className={styles.card}>
       <Image
@@ -21,15 +21,18 @@ const QuoteCard = () => {
       />
       <div className={styles.rightContainer}>
         <h1>Douglas Silva</h1>
-        <h3>Software Engineer</h3>
+        <h2>Software Engineer</h2>
         <div className={styles.linksContainer}>
-          <Link href="https://github.com/douugdev">
+          <Link aria-label="Link to github" href="https://github.com/douugdev">
             <FaGithub />
           </Link>
-          <Link href="mailto:douglas@prototech.dev">
+          <Link aria-label="Link to email" href="mailto:douglas@prototech.dev">
             <MdEmail />
           </Link>
-          <Link href="https://x.com/douugdev">
+          <Link
+            aria-label="Link to X (previously twitter)"
+            href="https://x.com/douugdev"
+          >
             <FaSquareXTwitter />
           </Link>
         </div>

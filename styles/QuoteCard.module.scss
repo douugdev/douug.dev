@@ -21,7 +21,7 @@
   max-width: 60rem;
   height: 70vh;
 
-  font-family: 'Red Hat Display';
+  font-family: var(--font-red-hat-display);
 
   .image {
     width: 15rem;
@@ -53,9 +53,10 @@
       margin: 0;
       font-size: 28pt;
       font-weight: bold;
+      font-family: var(--font-red-hat-display);
     }
 
-    h3 {
+    h2 {
       margin: 0;
       font-size: 12pt;
       font-weight: lighter;
@@ -83,17 +84,17 @@
         margin: 0;
         margin-bottom: 1.5rem;
 
-        font-family: 'Roboto Serif';
+        font-family: var(--font-roboto-serif);
         font-size: 18pt;
         position: relative;
 
         .quoteAuthor {
-          font-family: 'Roboto Serif';
+          font-family: var(--font-roboto-serif);
           font-style: italic;
         }
 
         .quotationMark {
-          font-family: 'Roboto Serif';
+          font-family: var(--font-roboto-serif);
           font-size: 90pt;
           position: absolute;
           @include themify($themes) {

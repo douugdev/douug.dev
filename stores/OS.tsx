@@ -3,36 +3,38 @@ import { atom, computed } from 'nanostores';
 import { MutableRefObject } from 'react';
 import { v4 } from 'uuid';
 
-export type ProcessType =
-  | {
-      appName: string;
-      processId: string;
-      iconSource: string;
-      type: 'windowed';
-      launchOpts: { [key: string]: string };
-      window: {
-        Component: React.FunctionComponent<ContentComponentProps>;
-        title?: string;
-        hideDefaultHandler?: boolean;
-        handleRef?: MutableRefObject<HTMLDivElement>;
-        pos: { x?: number; y?: number };
-        isFocused: boolean;
-        state: 'minimized' | 'open' | 'fullscreen';
-        size: {
-          width: number;
-          startWidth: number;
-          height: number;
-          startHeight: number;
-        };
-      };
-    }
-  | {
-      appName: string;
-      processId: string;
-      iconSource: string;
-      launchOpts: { [key: string]: string };
-      type: 'background';
+export type WindowedProcessType = {
+  appName: string;
+  processId: string;
+  iconSource: string;
+  type: 'windowed';
+  launchOpts: { [key: string]: string };
+  window: {
+    Component: React.FunctionComponent<ContentComponentProps>;
+    title?: string;
+    hideDefaultHandler?: boolean;
+    handleRef?: MutableRefObject<HTMLDivElement>;
+    pos: { x?: number; y?: number };
+    isFocused: boolean;
+    state: 'minimized' | 'open' | 'fullscreen';
+    size: {
+      width: number;
+      startWidth: number;
+      height: number;
+      startHeight: number;
     };
+  };
+};
+
+export type BackgroundProcessType = {
+  appName: string;
+  processId: string;
+  iconSource: string;
+  launchOpts: { [key: string]: string };
+  type: 'background';
+};
+
+export type ProcessType = WindowedProcessType | BackgroundProcessType;
 
 export const isProcess = (obj: any): obj is ProcessType => {
   return (

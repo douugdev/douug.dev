@@ -22,7 +22,7 @@ const QuoteCard = async () => {
       <div className={styles.rightContainer}>
         <h1>Douglas Silva</h1>
         <h2>Software Engineer</h2>
-        <div className={styles.linksContainer}>
+        <div className={styles.upperLinksContainer}>
           <Link aria-label="Link to github" href="https://github.com/douugdev">
             <FaGithub />
           </Link>

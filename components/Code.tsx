@@ -143,7 +143,7 @@ const Code = ({ pid }: ContentComponentProps) => {
           height="100%"
           width="100%"
           options={{
-            fontFamily: 'Open Sans',
+            fontFamily: 'Red Hat Display',
             fontLigatures: true,
             fontSize: 18,
             minimap: { enabled: false },

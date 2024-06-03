@@ -18,8 +18,6 @@ const computedDockItems = computed(processes, (window) => {
   return window.map((w) => w.appName);
 });
 
-wallpaper.listen(() => {});
-
 const Desktop = () => {
   const de = useStore(desktopEnvironment);
   const windows = useStore(processes);

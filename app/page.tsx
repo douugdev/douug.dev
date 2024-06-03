@@ -1,9 +1,11 @@
 import type { NextPage } from 'next/types';
-import QuoteCard from '../components/QuoteCard';
 import styles from '../styles/Home.module.scss';
 import Image from 'next/image';
-import bgImage from '@/static/bg-cafe-preblurred.jpeg';
+import bgImage from '@/static/bg-cafe-preblurred.jpg';
 import { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+
+const QuoteCard = dynamic(() => import('@/components/QuoteCard'));
 
 export const metadata: Metadata = {
   title: "Douglas' Portfolio",

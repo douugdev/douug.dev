@@ -36,17 +36,21 @@ export type BackgroundProcessType = {
 
 export type ProcessType = WindowedProcessType | BackgroundProcessType;
 
+export type BootStateType = 'booting' | 'booted' | 'suspended' | 'off';
+
 export const isProcess = (obj: any): obj is ProcessType => {
   return (
     obj.appName && obj.processId && obj.iconSource && obj.type && obj.launchOpts
   );
 };
 
-export type BootStateType = 'booting' | 'booted' | 'suspended' | 'off';
+export const mouse = atom<BootStateType>('booting');
+
+// export const keyboard = atom();
 
 export const bootState = atom<BootStateType>('booting');
 
-export const globalPath = atom<string[]>([]);
+export const globalPath = atom<string[]>(['/bin']);
 
 export const processes = atom<ProcessType[]>([]);
 

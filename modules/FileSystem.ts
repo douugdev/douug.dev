@@ -223,20 +223,15 @@ const homeDir = initialHardDrive
 homeDir.createFile(
   'readme.txt',
   `
-  There's a few commands you can use:
+  Hello! I'm a software engineer from São Paulo, Brazil.
+  I speak Brazilian Portuguese, English, a bit of Spanish and Italian.
+  
+  Feel free to explore a few of my personal projects using the "open" command, such as:
+  
+  $ open synth
 
-  cd    - Change directories, usage: 'cd /home'
-  mkdir - Create a directory, usage: 'mkdir myDirectory'
-  ls    - List files and directories, usage: 'ls'
-  help  - List available commands (it updates automatically even if I forget to add docs here), usage: 'help'
-  pwd   - Shows your current path, usage: 'pwd'
-  echo  - Just repeats what you type, usage: 'echo Hello world!'
-  clear - Clears the terminal, usage: 'clear'
-  cat   - Displays content from files, usage: 'cat readme.txt'
-  open  - Opens an app, usage: 'open browser'
-
-  It's all a bit buggy at the moment, but a cool PoC!!
-`
+  Also, use "help" to know which commands are available.
+  `
 );
 
 const projectsDir = homeDir.findDirectory('projects');
@@ -245,21 +240,6 @@ projectsDir?.createFile(
   'thisWebsite.txt',
   'This website is a work in progress'
 );
-
-// Dlang is too crude to be added yet
-// I need to write a lexer and parser from scratch!!
-
-// projectsDir?.createFile(
-//   'example.doug',
-//   `// Dlang is the language of the gods
-// // ...or devils?
-
-// number doug() {
-//   console_log("What???\\n");
-//   console_log("%d\\n", (3 * (1 + 2)) - 5);
-//   gives 1;
-// }`
-// );
 projectsDir?.createFile('synth.txt', 'type "open synth" to see this project');
 projectsDir?.createFile(
   'code.ts',

@@ -21,16 +21,14 @@ import { getProcess } from '@/stores/OS';
 import { WindowProps } from './Window';
 
 const termstyles = `
-background-color: #00000050;
 color: white;
-flex: 1;
-height: 100%;
-padding: 0.5rem;
+padding: 0rem 0.5rem;
+padding-top: 2rem;
+
 width: 100%;
+height: 100%;
 overflow-y: auto;
-backdrop-filter: blur(30pt);
 overflow-x: hidden;
-z-index: 9;
 `;
 
 // ┌─┬─┐
@@ -84,7 +82,6 @@ const Terminal: React.FC<WindowProps> = ({ pid }) => {
   );
   const [loadingFonts, setLoadingFonts] = useState<boolean>(true);
   const [loadingTerm, setLoadingTerm] = useState<boolean>(true);
-  // const [currentCommand, setCurrentCommand] = useState<string>();
 
   const process = useStore(getProcess(pid));
 

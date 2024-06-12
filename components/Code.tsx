@@ -1,7 +1,7 @@
 'use client';
 
 import { getSafeProcessInfo, processes } from '@/stores/OS';
-import Editor, { Monaco, useMonaco } from '@monaco-editor/react';
+import Editor, { Monaco } from '@monaco-editor/react';
 import { useStore } from '@nanostores/react';
 import { hardDrive, File, Directory } from 'modules/FileSystem';
 import { editor } from 'monaco-editor';

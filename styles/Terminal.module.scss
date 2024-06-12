@@ -5,13 +5,20 @@
   width: 100%;
   flex: 1;
 
-  background-color: #00000050;
+  @include themify($themes) {
+    background-color: themed('backgroundColorHalf');
+  }
   backdrop-filter: blur(30pt);
 }
 
 .terminal {
   height: 100%;
   width: 100%;
+
+  @include themify($themes) {
+    background-color: themed('backgroundColorHalf');
+  }
+  backdrop-filter: blur(30pt);
 }
 
 .logsContainer {

@@ -6,19 +6,14 @@ import { PiCoffeeBean } from 'react-icons/pi';
 import { FaGithub } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { FaSquareXTwitter } from 'react-icons/fa6';
-import Image from 'next/image';
-import cappuccino from '@/static/coffee-keyboard.jpg';
+import Cup from './Cup';
 
 const QuoteCard = async () => {
   return (
     <div className={styles.card}>
-      <Image
-        src={cappuccino}
-        alt="A cappuccino with latte art and a computer behind it"
-        className={styles.image}
-        placeholder="blur"
-        priority
-      />
+      <div className={styles.canvas}>
+        <Cup />
+      </div>
       <div className={styles.rightContainer}>
         <h1>Douglas Silva</h1>
         <h2>Software Engineer</h2>

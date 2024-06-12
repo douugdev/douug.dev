@@ -1,26 +1,20 @@
 'use client';
 
-import {
-  focusWindow,
-  getProcess,
-  getSafeProcessInfo,
-  killProcess,
-  setProcess,
-} from '@/stores/OS';
+import { focusWindow, killProcess } from '@/stores/OS';
 import { isBetween, normalizeValue } from '@/utils/number';
-import { useStore } from '@nanostores/react';
 import {
+  MouseEvent,
   MouseEventHandler,
   PropsWithChildren,
   useCallback,
   useEffect,
   useRef,
   useState,
-  MouseEvent,
 } from 'react';
 import styles from 'styles/Window.module.scss';
 import desktopStyles from 'styles/Desktop.module.scss';
 import useMousePosition from '@/hooks/useMousePosition';
+import useWindowedProcess from '@/hooks/useWindow';
 
 export type ContentComponentProps = {
   pid: string;
@@ -38,16 +32,8 @@ export type WindowProps = {
   pid: string;
 };
 
-const Window = ({
-  ContentComponent,
-  pid,
-}: // customHandler,
-// title,
-PropsWithChildren<WindowProps>) => {
-  const processInfo = useStore(getProcess(pid));
-  if (!processInfo || processInfo.type === 'background') {
-    throw 'Tried rendering a window for a background or unavailable process';
-  }
+const Window = ({ ContentComponent, pid }: PropsWithChildren<WindowProps>) => {
+  const [windowedProcess, setWindowedProcess] = useWindowedProcess(pid);
   const windowRef = useRef<HTMLDivElement>(null!);
 
   const { x, y } = useMousePosition();
@@ -64,44 +50,44 @@ PropsWithChildren<WindowProps>) => {
   };
 
   const minimize = () => {
-    const oldProcess = getSafeProcessInfo(pid);
-    setProcess(pid, {
-      ...oldProcess,
+    setWindowedProcess((prev) => ({
+      ...prev,
       window: {
-        ...oldProcess.window,
+        ...prev.window,
         state: 'minimized',
       },
-    });
+    }));
   };
 
   const maximize = useCallback(
     (enterFullscreen: boolean) => {
-      const oldProcess = getSafeProcessInfo(pid);
-
-      setProcess(pid, {
-        ...oldProcess,
+      setWindowedProcess((prev) => ({
+        ...prev,
         window: {
-          ...oldProcess.window,
+          ...prev.window,
           pos: !enterFullscreen
             ? {
-                x:
-                  window.innerWidth / 2 - oldProcess.window.size.startWidth / 2,
+                x: window.innerWidth / 2 - prev.window.size.startWidth / 2,
                 y: 5,
               }
-            : oldProcess.window.pos,
+            : prev.window.pos,
           // Also save the height and width so we can use when exiting maximize state
           size: {
-            ...oldProcess.window.size,
+            ...prev.window.size,
           },
           state: enterFullscreen ? 'fullscreen' : 'open',
         },
-      });
+      }));
     },
-    [pid]
+    [setWindowedProcess]
   );
 
-  const onMouseUp: MouseEventHandler<HTMLDivElement> = useCallback(
-    (e) => {
+  const onMouseUp = useCallback(
+    (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+      if (changeAction === 'idle') {
+        return;
+      }
+
       e.preventDefault();
       if (isBetween(e.clientY, -1000, 5, true)) {
         maximize(true);
@@ -109,31 +95,26 @@ PropsWithChildren<WindowProps>) => {
       setMaxThroughSnapping(undefined);
       setChangeAction('idle');
     },
-    [maximize]
+    [changeAction, maximize]
   );
 
-  const onMouseDown: MouseEventHandler<HTMLDivElement> = useCallback(
-    (e) => {
-      console.log('onMouseDownCalled');
+  const onMouseDown = useCallback(
+    (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
       e.preventDefault();
       setMouseX(e.clientX);
       setMouseY(e.clientY);
       setChangeAction('dragging');
 
-      if (processInfo.window.state === 'fullscreen') {
+      if (windowedProcess.window.state === 'fullscreen') {
         return maximize(false);
       }
     },
-    [maximize, processInfo.window.state]
+    [maximize, windowedProcess.window.state]
   );
 
   const onMouseMove = useCallback(() => {
     switch (changeAction) {
       case 'dragging':
-        const oldProcess = getProcess(pid).get();
-        if (!oldProcess || oldProcess.type === 'background') {
-          return;
-        }
         // If you move more than this amount, the snap disables
         const MOUSE_OFFSET = 45; // Px
 
@@ -200,10 +181,10 @@ PropsWithChildren<WindowProps>) => {
           setMouseY(y);
         }
 
-        setProcess(pid, {
-          ...oldProcess,
+        setWindowedProcess((prev) => ({
+          ...prev,
           window: {
-            ...oldProcess.window,
+            ...prev.window,
             pos: {
               x:
                 windowRef.current.offsetLeft -
@@ -213,25 +194,31 @@ PropsWithChildren<WindowProps>) => {
                 : 0,
             },
           },
-        });
+        }));
         break;
       case 'resizing':
         break;
     }
-  }, [changeAction, mouseX, mouseY, pid, x, y]);
+  }, [changeAction, mouseX, mouseY, setWindowedProcess, x, y]);
 
   useEffect(() => {
     const listener: MouseEventHandler<HTMLDivElement> = (e) => {
       onMouseUp(e);
     };
+
     if (changeAction !== 'idle') {
       // @ts-expect-error
       document.addEventListener('mouseup', listener);
     } else {
       // @ts-expect-error
-      document.removeEventListener('mouseup', listener);
+      document.addEventListener('mouseup', listener);
     }
-  }, [changeAction, onMouseUp]);
+
+    return () => {
+      // @ts-expect-error
+      document.removeEventListener('mouseup', listener);
+    };
+  }, [changeAction, onMouseUp, pid]);
 
   useEffect(() => {
     if (changeAction !== 'idle') {
@@ -240,9 +227,7 @@ PropsWithChildren<WindowProps>) => {
   }, [changeAction, onMouseMove]);
 
   useEffect(() => {
-    if (processInfo.window.state === 'fullscreen') {
-      const oldProcess = getSafeProcessInfo(pid);
-
+    if (windowedProcess.window.state === 'fullscreen') {
       const dockElement = document.getElementsByClassName(
         desktopStyles.dock
       )[0];
@@ -255,13 +240,13 @@ PropsWithChildren<WindowProps>) => {
         10
       );
 
-      setProcess(pid, {
-        ...oldProcess,
+      setWindowedProcess((prev) => ({
+        ...prev,
         window: {
-          ...oldProcess.window,
+          ...prev.window,
           size: {
-            startHeight: oldProcess.window.size.height,
-            startWidth: oldProcess.window.size.width,
+            startHeight: prev.window.size.height,
+            startWidth: prev.window.size.width,
             width: window.innerWidth,
             height:
               window.innerHeight -
@@ -273,27 +258,26 @@ PropsWithChildren<WindowProps>) => {
             y: 0,
           },
         },
-      });
+      }));
     }
 
-    if (processInfo.window.state === 'open') {
-      const oldProcess = getSafeProcessInfo(pid);
-      setProcess(pid, {
-        ...oldProcess,
+    if (windowedProcess.window.state === 'open') {
+      setWindowedProcess((prev) => ({
+        ...prev,
         window: {
-          ...oldProcess.window,
+          ...prev.window,
           size: {
-            ...oldProcess.window.size,
-            width: oldProcess.window.size.startWidth,
-            height: oldProcess.window.size.startHeight,
+            ...prev.window.size,
+            width: prev.window.size.startWidth,
+            height: prev.window.size.startHeight,
           },
         },
-      });
+      }));
     }
-  }, [pid, processInfo.window.state]);
+  }, [pid, setWindowedProcess, windowedProcess.window.state]);
 
   useEffect(() => {
-    const { width } = processInfo.window.size;
+    const { width } = windowedProcess.window.size;
     const dockElement = document.getElementsByClassName(desktopStyles.dock)[0];
     const dockBottomDistance = parseInt(
       dockElement
@@ -336,66 +320,73 @@ PropsWithChildren<WindowProps>) => {
       <div
         ref={windowRef}
         className={`${styles.window} ${
-          processInfo.window.state === 'open'
+          windowedProcess.window.state === 'open'
             ? styles.windowOpen
-            : processInfo.window.state === 'minimized'
+            : windowedProcess.window.state === 'minimized'
             ? styles.windowMinimized
             : ''
         }`}
         onMouseDown={() => focusWindow(pid)}
         style={{
-          left: processInfo.window.pos.x,
-          top: processInfo.window.pos.y,
+          left: windowedProcess.window.pos.x,
+          top: windowedProcess.window.pos.y,
           height:
-            processInfo.window.size.height ||
-            processInfo.window.size.startHeight,
+            windowedProcess.window.size.height ||
+            windowedProcess.window.size.startHeight,
           width:
-            processInfo.window.size.width || processInfo.window.size.startWidth,
+            windowedProcess.window.size.width ||
+            windowedProcess.window.size.startWidth,
         }}
       >
-        {!processInfo.window.hideDefaultHandler ? (
-          <div className={styles.handle}>
-            <div className={styles.draggable} onMouseDown={onMouseDown}></div>
-            <div className={styles.windowButtonsContainer}>
-              <button
-                className={styles.windowButtonClose}
-                onClick={() => close()}
-              />
-              <button
-                className={styles.windowButtonMinimize}
-                onClick={() => minimize()}
-              />
-              <button
-                className={styles.windowButtonMaximize}
-                onClick={() =>
-                  maximize(
-                    processInfo.window.state === 'fullscreen' ? false : true
-                  )
-                }
-              />
+        <div className={styles.container}>
+          {!windowedProcess.window.hideDefaultHandler ? (
+            <div className={styles.handle}>
+              <div className={styles.draggable} onMouseDown={onMouseDown}></div>
+              <div className={styles.windowButtonsContainer}>
+                <button
+                  className={styles.windowButtonClose}
+                  onClick={() => close()}
+                />
+                <button
+                  className={styles.windowButtonMinimize}
+                  onClick={() => minimize()}
+                />
+                <button
+                  className={styles.windowButtonMaximize}
+                  onClick={() =>
+                    maximize(
+                      windowedProcess.window.state === 'fullscreen'
+                        ? false
+                        : true
+                    )
+                  }
+                />
+              </div>
+              {windowedProcess.window.title ? (
+                <span className={styles.windowTitle}>
+                  {windowedProcess.window.title}
+                </span>
+              ) : (
+                <></>
+              )}
             </div>
-            {processInfo.window.title ? (
-              <span className={styles.windowTitle}>
-                {processInfo.window.title}
-              </span>
-            ) : (
-              <></>
-            )}
-          </div>
-        ) : (
-          <></>
-        )}
+          ) : (
+            <></>
+          )}
 
-        <div className={styles.content}>
-          <ContentComponent
-            pid={pid}
-            close={close}
-            maximize={maximize}
-            minimize={minimize}
-            onMouseDown={onMouseDown}
-            onMouseUp={onMouseUp}
-            onMouseMove={onMouseMove}
-          />
+          <div
+            className={styles.content}
+          >
+            <ContentComponent
+              pid={pid}
+              close={close}
+              maximize={maximize}
+              minimize={minimize}
+              onMouseDown={onMouseDown}
+              onMouseUp={onMouseUp}
+              onMouseMove={onMouseMove}
+            />
+          </div>
         </div>
       </div>
       <div

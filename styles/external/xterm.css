@@ -35,7 +35,7 @@
  *  Default styles for xterm.js
  */
 
-.xterm {
+ .xterm {
   cursor: text;
   position: relative;
   user-select: none;
@@ -74,13 +74,12 @@
   white-space: nowrap;
   overflow: hidden;
   resize: none;
-  background-color: transparent;
 }
 
 .xterm .composition-view {
   /* TODO: Composition position got messed up somewhere */
-  /* background: #000; */
-  color: #b10101;
+  background: #000;
+  color: #FFF;
   display: none;
   position: absolute;
   white-space: nowrap;
@@ -93,7 +92,7 @@
 
 .xterm .xterm-viewport {
   /* On OS X this is required in order for the scroll bar to appear fully opaque */
-  /* background-color: black; */
+  background-color: #000;
   overflow-y: scroll;
   cursor: default;
   position: absolute;
@@ -101,13 +100,6 @@
   left: 0;
   top: 0;
   bottom: 0;
-}
-
-.xterm .xterm-link-layer {
-  width: 100%;
-  height: 100%;
-  /* background-color: #00000050; */
-  /* backdrop-filter: blur(30pt); */
 }
 
 .xterm .xterm-screen {
@@ -148,7 +140,7 @@
   cursor: crosshair;
 }
 
-.xterm .xterm-accessibility,
+.xterm .xterm-accessibility:not(.debug),
 .xterm .xterm-message {
   position: absolute;
   left: 0;
@@ -157,6 +149,22 @@
   right: 0;
   z-index: 10;
   color: transparent;
+  pointer-events: none;
+}
+
+.xterm .xterm-accessibility-tree:not(.debug) *::selection {
+color: transparent;
+}
+
+.xterm .xterm-accessibility-tree {
+font-family: monospace;
+user-select: text;
+white-space: pre;
+}
+
+.xterm .xterm-accessibility-tree > div {
+transform-origin: left;
+width: fit-content;
 }
 
 .xterm .live-region {
@@ -168,36 +176,42 @@
 }
 
 .xterm-dim {
-  opacity: 0.5;
+  /* Dim should not apply to background, so the opacity of the foreground color is applied
+   * explicitly in the generated class and reset to 1 here */
+  opacity: 1 !important;
 }
 
-.xterm-underline-1 {
-  text-decoration: underline;
+.xterm-underline-1 { text-decoration: underline; }
+.xterm-underline-2 { text-decoration: double underline; }
+.xterm-underline-3 { text-decoration: wavy underline; }
+.xterm-underline-4 { text-decoration: dotted underline; }
+.xterm-underline-5 { text-decoration: dashed underline; }
+
+.xterm-overline {
+  text-decoration: overline;
 }
-.xterm-underline-2 {
-  text-decoration: double underline;
-}
-.xterm-underline-3 {
-  text-decoration: wavy underline;
-}
-.xterm-underline-4 {
-  text-decoration: dotted underline;
-}
-.xterm-underline-5 {
-  text-decoration: dashed underline;
-}
+
+.xterm-overline.xterm-underline-1 { text-decoration: overline underline; }
+.xterm-overline.xterm-underline-2 { text-decoration: overline double underline; }
+.xterm-overline.xterm-underline-3 { text-decoration: overline wavy underline; }
+.xterm-overline.xterm-underline-4 { text-decoration: overline dotted underline; }
+.xterm-overline.xterm-underline-5 { text-decoration: overline dashed underline; }
 
 .xterm-strikethrough {
   text-decoration: line-through;
 }
 
 .xterm-screen .xterm-decoration-container .xterm-decoration {
-  z-index: 6;
-  position: absolute;
+z-index: 6;
+position: absolute;
+}
+
+.xterm-screen .xterm-decoration-container .xterm-decoration.xterm-decoration-top-layer {
+z-index: 7;
 }
 
 .xterm-decoration-overview-ruler {
-  z-index: 7;
+  z-index: 8;
   position: absolute;
   top: 0;
   right: 0;
@@ -208,6 +222,7 @@
   z-index: 2;
   position: relative;
 }
+
 
 .xterm-viewport::-webkit-scrollbar-track {
   background-color: rgba(128, 128, 128, 0.164);

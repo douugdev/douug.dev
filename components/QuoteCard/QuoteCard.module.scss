@@ -11,6 +11,9 @@ $breakpoints: (
   justify-content: flex-end;
   gap: 1rem;
 
+  height: 70vh;
+  z-index: 1;
+
   border-radius: 2rem;
 
   @include themify($themes) {
@@ -30,9 +33,6 @@ $breakpoints: (
   }
 
   backdrop-filter: blur(12pt);
-
-  height: 70vh;
-
   font-family: var(--font-red-hat-display);
 
   .canvas {
@@ -46,7 +46,7 @@ $breakpoints: (
     left: 0;
 
     transform: translateX(-40%);
-    z-index: 1000;
+    z-index: 4;
     justify-content: center;
     border-radius: 1rem;
     object-fit: cover;
@@ -57,6 +57,7 @@ $breakpoints: (
   .rightContainer {
     display: flex;
     flex-direction: column;
+    z-index: 5;
 
     @include media('>tablet') {
       align-items: flex-end;

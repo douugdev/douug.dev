@@ -1,15 +1,15 @@
 import 'styles/globals.css';
 import { Red_Hat_Display, Red_Hat_Mono, Roboto_Serif } from 'next/font/google';
 
-export const redHatMono = Red_Hat_Mono({
+const redHatMono = Red_Hat_Mono({
   subsets: ['latin'],
   variable: '--font-red-hat-mono',
 });
-export const redHatDisplay = Red_Hat_Display({
+const redHatDisplay = Red_Hat_Display({
   subsets: ['latin'],
   variable: '--font-red-hat-display',
 });
-export const robotoSerif = Roboto_Serif({
+const robotoSerif = Roboto_Serif({
   subsets: ['latin'],
   variable: '--font-roboto-serif',
 });

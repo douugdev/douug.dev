@@ -1,4 +1,4 @@
-import { ContentComponentProps, WindowProps } from '@/components/Window/Window';
+import { ContentComponentProps } from '@/components/Window';
 import { atom, computed } from 'nanostores';
 import { MutableRefObject } from 'react';
 import { v4 } from 'uuid';
@@ -45,8 +45,6 @@ export const isProcess = (obj: any): obj is ProcessType => {
 };
 
 export const mouse = atom<BootStateType>('booting');
-
-// export const keyboard = atom();
 
 export const bootState = atom<BootStateType>('booting');
 

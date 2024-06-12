@@ -19,7 +19,7 @@ const Cup = () => {
     mouseRef.current = ev;
   });
 
-  useFrame(({ clock }) => {
+  useFrame(() => {
     if (!cupRef.current) {
       return;
     }
@@ -37,11 +37,14 @@ const Cup = () => {
     const centeredY =
       ((mouseY - window.innerHeight / 2) / window.innerHeight) *
       -Math.sign(centeredX);
-    console.log(centeredX, centeredY);
+
     cupRef.current.rotation.copy(
       new Euler(
-        // MathUtils.lerp(cupRef.current.rotation.x, centeredY * 1, 0.015),
-        0.2,
+        MathUtils.lerp(
+          cupRef.current.rotation.x,
+          centeredY * 0.15 + 0.2,
+          0.015
+        ),
         MathUtils.lerp(cupRef.current.rotation.y, centeredX * 1, 0.015),
         0.1
       )

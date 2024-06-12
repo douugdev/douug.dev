@@ -11,14 +11,14 @@ import { WebglAddon } from '@xterm/addon-webgl';
 import { FitAddon } from '@xterm/addon-fit';
 
 import { xtermjsTheme } from '@/styles/external/termTheme';
-import styles from '@/styles/Terminal.module.scss';
+import styles from './Terminal.module.scss';
 import '@/styles/globals.css';
 import '@/styles/external/xterm.css';
 
 import { configureTerminal } from '@/modules/Terminal';
 import { termColors } from '@/utils/termColors';
 import { getProcess } from '@/stores/OS';
-import { WindowProps } from './Window';
+import { WindowProps } from '../Window';
 
 const termstyles = `
 color: white;

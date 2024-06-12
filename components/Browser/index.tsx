@@ -1,11 +1,11 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import styles from 'styles/Browser.module.scss';
-import windowStyles from 'styles/Window.module.scss';
+import styles from './Browser.module.scss';
+import windowStyles from '../Window/Window.module.scss';
 import { IoLockClosed } from 'react-icons/io5';
 import { IoIosArrowDroprightCircle } from 'react-icons/io';
-import { ContentComponentProps } from './Window';
+import { ContentComponentProps } from '@/components/Window';
 import useWindowedProcess from '@/hooks/useWindow';
 
 type URLInfo = {

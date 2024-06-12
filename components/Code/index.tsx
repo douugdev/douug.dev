@@ -12,9 +12,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import styles from 'styles/Code.module.scss';
-import { codeTheme } from 'styles/external/codeTheme';
-import { ContentComponentProps } from './Window';
+import styles from './Code.module.scss';
+import { codeTheme } from '@/styles/external/codeTheme';
+import { ContentComponentProps } from '../Window';
 
 const Code = ({ pid }: ContentComponentProps) => {
   const fileExplorerRef = useRef<HTMLDivElement>(null!);

@@ -4,7 +4,7 @@ import { Gltf, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import { Euler, MathUtils, Mesh } from 'three';
-import CanvasHOC from './CanvasHOC';
+import CanvasHOC from '../CanvasHOC';
 
 const Cup = () => {
   const mouseRef = useRef<MouseEvent>(null!);
@@ -40,9 +40,10 @@ const Cup = () => {
     console.log(centeredX, centeredY);
     cupRef.current.rotation.copy(
       new Euler(
-        MathUtils.lerp(cupRef.current.rotation.x, centeredY * 1, 0.015),
+        // MathUtils.lerp(cupRef.current.rotation.x, centeredY * 1, 0.015),
+        0.2,
         MathUtils.lerp(cupRef.current.rotation.y, centeredX * 1, 0.015),
-        MathUtils.lerp(cupRef.current.rotation.z, 0, 0.2)
+        0.1
       )
     );
   });

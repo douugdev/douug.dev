@@ -1,8 +1,8 @@
 'use client';
 
 import { useStore } from '@nanostores/react';
-import { desktopEnvironment, wallpaper } from 'stores/DE';
-import styles from 'styles/Desktop.module.scss';
+import { desktopEnvironment } from 'stores/DE';
+import styles from './Desktop.module.scss';
 import { useEffect } from 'react';
 import { launchApp, processes } from 'stores/OS';
 import dynamic from 'next/dynamic';
@@ -10,7 +10,9 @@ import { computed } from 'nanostores';
 import { removeStringDuplicates } from 'utils/array';
 import Image from 'next/image';
 
-const Window = dynamic(() => import('components/Window'), { ssr: false });
+const Window = dynamic(() => import('@/components/Window'), {
+  ssr: false,
+});
 
 const pinnedDockApps = ['terminal', 'browser', 'music', 'code'];
 

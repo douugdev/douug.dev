@@ -14,7 +14,7 @@ import {
   hardDrive,
   PREVIOUS_DIRECTORY,
 } from 'modules/FileSystem';
-import styles from 'styles/Terminal.module.scss';
+import styles from './Terminal.module.scss';
 import { launchApp } from 'stores/OS';
 
 const LegacyTerminal = () => {

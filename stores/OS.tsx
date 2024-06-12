@@ -1,4 +1,4 @@
-import { ContentComponentProps, WindowProps } from 'components/Window';
+import { ContentComponentProps, WindowProps } from '@/components/Window/Window';
 import { atom, computed } from 'nanostores';
 import { MutableRefObject } from 'react';
 import { v4 } from 'uuid';

@@ -1,12 +1,12 @@
 'use server';
 
 import Link from 'next/link';
-import styles from '../styles/QuoteCard.module.scss';
+import styles from './QuoteCard.module.scss';
 import { PiCoffeeBean } from 'react-icons/pi';
 import { FaGithub } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { FaSquareXTwitter } from 'react-icons/fa6';
-import Cup from './Cup';
+import Cup from '../Cup';
 
 const QuoteCard = async () => {
   return (

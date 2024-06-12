@@ -11,10 +11,10 @@ import {
   useRef,
   useState,
 } from 'react';
-import styles from 'styles/Window.module.scss';
-import desktopStyles from 'styles/Desktop.module.scss';
 import useMousePosition from '@/hooks/useMousePosition';
 import useWindowedProcess from '@/hooks/useWindow';
+import styles from './Window.module.scss';
+import desktopStyles from '../Desktop/Desktop.module.scss';
 
 export type ContentComponentProps = {
   pid: string;
@@ -374,9 +374,7 @@ const Window = ({ ContentComponent, pid }: PropsWithChildren<WindowProps>) => {
             <></>
           )}
 
-          <div
-            className={styles.content}
-          >
+          <div className={styles.content}>
             <ContentComponent
               pid={pid}
               close={close}

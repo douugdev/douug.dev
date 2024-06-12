@@ -1,7 +1,5 @@
 import type { NextPage } from 'next/types';
-import styles from '../styles/Home.module.scss';
-import Image from 'next/image';
-import bgImage from '@/static/bg-cafe-preblurred.jpg';
+import styles from './Home.module.scss';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 
@@ -25,13 +23,6 @@ export const metadata: Metadata = {
 const Home: NextPage = async () => {
   return (
     <div className={styles.container}>
-      <Image
-        className={styles.bgImage}
-        alt="Background coffee shop"
-        src={bgImage}
-        placeholder="blur"
-        aria-label="A blurred image of a coffee shop"
-      />
       <QuoteCard />
     </div>
   );

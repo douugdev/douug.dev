@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Color, Euler, MathUtils, Mesh, Vector3 } from 'three';
 import { useEffect, useRef, useState } from 'react';
 import { Text3D } from '@react-three/drei';
-import styles from 'styles/SplashScreen.module.scss';
+import styles from './SplashScreen.module.scss';
 import { bootState } from 'stores/OS';
 
 const bootTexts = [

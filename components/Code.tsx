@@ -143,14 +143,13 @@ const Code = ({ pid }: ContentComponentProps) => {
           height="100%"
           width="100%"
           options={{
-            fontFamily: 'Red Hat Display',
+            fontFamily: 'Red Hat Mono',
             fontLigatures: true,
             fontSize: 18,
             minimap: { enabled: false },
             smoothScrolling: true,
             cursorBlinking: 'smooth',
           }}
-          // defaultLanguage="text"
           language={
             currentFile?.name.includes('.ts')
               ? 'typescript'

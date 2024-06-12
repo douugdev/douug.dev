@@ -1,11 +1,15 @@
 import 'styles/globals.css';
-import { Red_Hat_Display, Roboto_Serif } from 'next/font/google';
+import { Red_Hat_Display, Red_Hat_Mono, Roboto_Serif } from 'next/font/google';
 
-const redHatDisplay = Red_Hat_Display({
+export const redHatMono = Red_Hat_Mono({
+  subsets: ['latin'],
+  variable: '--font-red-hat-mono',
+});
+export const redHatDisplay = Red_Hat_Display({
   subsets: ['latin'],
   variable: '--font-red-hat-display',
 });
-const robotoSerif = Roboto_Serif({
+export const robotoSerif = Roboto_Serif({
   subsets: ['latin'],
   variable: '--font-roboto-serif',
 });
@@ -18,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${redHatDisplay.variable} ${robotoSerif.variable} theme-dark`}
+        className={`${redHatDisplay.variable} ${robotoSerif.variable} ${redHatMono.variable} theme-dark`}
       >
         {children}
       </body>

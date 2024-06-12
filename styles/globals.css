@@ -28,12 +28,6 @@ a {
   text-decoration: none;
 }
 
-label,
-p,
-span {
-  font-family: var(--font-red-hat-display);
-}
-
 * {
   box-sizing: border-box;
 }

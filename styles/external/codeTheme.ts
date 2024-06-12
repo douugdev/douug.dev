@@ -222,5 +222,7 @@ export const codeTheme: editor.IStandaloneThemeData = {
     'editorWhitespace.foreground': '#ffffff50',
     'editorIndentGuide.background': '#8F8F8F',
     'editorIndentGuide.activeBackground': '#FA2828',
+    'editorLineNumber.foreground': '#744f36',
+    'editorLineNumber.activeForeground': '#ffe4b2',
   },
 };

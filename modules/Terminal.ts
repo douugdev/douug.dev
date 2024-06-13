@@ -13,6 +13,7 @@ import {
 } from './FileSystem';
 import { atom } from 'nanostores';
 import stripAnsi from 'strip-ansi';
+import { launchApp } from '@/stores/OS';
 
 export type WASM = {
   cwrap: (
@@ -341,6 +342,35 @@ export const configureTerminal = (
         return 0;
       },
       description: 'Makes an HTTP request',
+    },
+    open: {
+      f: (...args: string[]) => {
+        switch (args[0]) {
+          case 'browser':
+            launchApp('browser');
+            return [];
+          case 'synth':
+            launchApp('browser', { initialURL: 'https://synth.douug.dev' });
+            return [];
+          case 'technopanther':
+            launchApp('browser', {
+              initialURL: 'https://technopanther.douug.dev',
+            });
+            return [];
+          case 'code':
+            launchApp('code');
+            return [];
+        }
+
+        return [`"${args[0]}": No such app or command`];
+      },
+      description: 'Opens an application',
+    },
+    code: {
+      f: (...args: string[]) => {
+        return open('code');
+      },
+      description: 'Opens a file in coffeeIDE ',
     },
   };
 

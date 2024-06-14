@@ -3,13 +3,14 @@
 import { Gltf, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
-import { Euler, MathUtils, Mesh } from 'three';
+import { Euler, MathUtils, Mesh, PointLight } from 'three';
 import CanvasHOC from '../CanvasHOC';
 
 const Cup = () => {
   const mouseRef = useRef<MouseEvent>(null!);
   const cupRef = useRef<Mesh>(null!);
-  const { camera } = useThree();
+  const pointLightRef = useRef<PointLight>(null!);
+  const { camera, gl } = useThree();
 
   useEffect(() => {
     camera.lookAt(0, 0, 0);
@@ -20,6 +21,13 @@ const Cup = () => {
   });
 
   useFrame(() => {
+    gl.shadowMap.enabled = true;
+
+    if (pointLightRef.current) {
+      pointLightRef.current.shadow.mapSize.height = 2048;
+      pointLightRef.current.shadow.mapSize.width = 2048;
+      pointLightRef.current.shadow.radius = 30;
+    }
     if (!cupRef.current) {
       return;
     }
@@ -69,14 +77,24 @@ const Cup = () => {
           intensity={5}
         />
       </PerspectiveCamera>
+      <pointLight
+        ref={pointLightRef}
+        position={[9, 0.7, -0.5]}
+        color={'#ffd4b1'}
+        intensity={20}
+        castShadow
+      />
       <mesh ref={cupRef}>
         <Gltf
           scale={0.8}
           src="/coffee-cup.glb"
           position={[0, -2, 0]}
-          receiveShadow
           castShadow
         />
+      </mesh>
+      <mesh scale={1} position={[-5, 0, 0]} receiveShadow>
+        <boxGeometry args={[1, 50, 50]} />
+        <shadowMaterial opacity={0.2} />
       </mesh>
     </>
   );

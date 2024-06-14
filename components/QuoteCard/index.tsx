@@ -4,8 +4,9 @@ import Link from 'next/link';
 import styles from './QuoteCard.module.scss';
 import { PiCoffeeBean } from 'react-icons/pi';
 import { FaGithub } from 'react-icons/fa';
-import { MdEmail } from 'react-icons/md';
+import { MdEmail, MdOutlinePiano } from 'react-icons/md';
 import { FaSquareXTwitter } from 'react-icons/fa6';
+
 import Cup from '../Cup';
 
 const QuoteCard = async () => {
@@ -51,13 +52,23 @@ const QuoteCard = async () => {
         </blockquote>
         <Link
           href="/coffeeos"
-          className={styles.bootButton}
+          className={styles.linkButton}
           aria-label="Boot virtual coffee OS button"
         >
           <label>
             Boot <b>coffeeOS</b>
           </label>
           <PiCoffeeBean className={styles.icon} />
+        </Link>
+        <Link
+          href="https://synth.douug.dev"
+          className={styles.linkButton}
+          aria-label="Enter virtual synthesizer button"
+        >
+          <label>
+            Enter <b>synth.ts</b>
+          </label>
+          <MdOutlinePiano  className={styles.icon} />
         </Link>
       </div>
     </div>

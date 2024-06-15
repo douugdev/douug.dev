@@ -115,56 +115,44 @@ $breakpoints: (
       width: 100%;
     }
 
-    .quoteContainer {
+    .phraseContainer {
       margin: 0;
       display: flex;
       flex-direction: column;
       flex: 1;
       justify-content: center;
 
-      .quote {
+      @keyframes reveal {
+        from {
+          filter: blur(3pt) opacity(0);
+          transform: translateX(10%);
+        }
+
+        to {
+          filter: blur(0pt) opacity(1);
+          transform: translateX(0);
+        }
+      }
+
+      .phrase {
+        animation: reveal 2s;
         margin: 0;
         margin-bottom: 1.5rem;
 
-        font-family: var(--font-roboto-serif);
-        font-size: 18pt;
+        font-family: var(--font-red-hat-display);
+        line-height: 95%;
+        font-size: 32pt;
         position: relative;
+        font-weight: lighter;
 
-        .quoteAuthor {
-          font-family: var(--font-roboto-serif);
-          font-style: italic;
-        }
-
-        .quotationMark {
-          font-family: var(--font-roboto-serif);
-          font-size: 90pt;
-          position: absolute;
-          @include themify($themes) {
-            color: themed('textColorThird');
-          }
-
-          &Start {
-            @extend .quotationMark;
-            @include media('>tablet') {
-              top: -2.5rem;
-              right: 9rem;
-            }
-            @include media('<tablet') {
-              top: -2.5rem;
-              left: 2rem;
-            }
-          }
-          &End {
-            @extend .quotationMark;
-            @include media('>tablet') {
-              top: 3rem;
-              right: calc(-1rem);
-            }
-            @include media('<tablet') {
-              top: -2.5rem;
-              right: 2rem;
-            }
-          }
+        strong {
+          background: linear-gradient(
+            182deg,
+            rgba(255, 204, 162, 0.774) 30%,
+            rgba(109, 45, 10, 0.795) 100%
+          );
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
       }
     }
@@ -183,7 +171,7 @@ $breakpoints: (
       }
 
       margin-top: 0.5rem;
-      
+
       display: flex;
       flex-direction: row;
       justify-content: space-between;

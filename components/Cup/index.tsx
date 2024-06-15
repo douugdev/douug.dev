@@ -1,9 +1,17 @@
 'use client';
 
-import { Gltf, OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { Gltf, PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
-import { Euler, MathUtils, Mesh, PointLight } from 'three';
+import {
+  Euler,
+  MathUtils,
+  Mesh,
+  Object3D,
+  Object3DEventMap,
+  PointLight,
+} from 'three';
+
 import CanvasHOC from '../CanvasHOC';
 
 const Cup = () => {
@@ -14,6 +22,10 @@ const Cup = () => {
 
   useEffect(() => {
     camera.lookAt(0, 0, 0);
+
+    if (cupRef.current) {
+      cupRef.current.position.set(0, 4, 0);
+    }
   }, [camera]);
 
   window.addEventListener('mousemove', (ev) => {
@@ -59,6 +71,15 @@ const Cup = () => {
     );
   });
 
+  // Cup drop animation
+  useFrame(() => {
+    cupRef.current.position.set(
+      0,
+      MathUtils.lerp(cupRef.current.position.y, 0, 0.015),
+      0
+    );
+  });
+
   return (
     <>
       <ambientLight color={'#6e5645'} intensity={1.5} />
@@ -68,7 +89,6 @@ const Cup = () => {
           intensity={3}
           color={'#ddb291'}
           rotation={new Euler(0, -5, 0)}
-          castShadow
         />
         <directionalLight
           castShadow
@@ -84,6 +104,7 @@ const Cup = () => {
         intensity={20}
         castShadow
       />
+
       <mesh ref={cupRef}>
         <Gltf
           scale={0.8}
@@ -92,9 +113,13 @@ const Cup = () => {
           castShadow
         />
       </mesh>
-      <mesh scale={1} position={[-5, 0, 0]} receiveShadow>
+      <mesh scale={1} position={[-10, 0, 0]} receiveShadow>
         <boxGeometry args={[1, 50, 50]} />
         <shadowMaterial opacity={0.2} />
+      </mesh>
+      <mesh scale={1} position={[-3, 0, -1.33]} receiveShadow>
+        <boxGeometry args={[1, 10, 5]} />
+        <shadowMaterial opacity={0.3} />
       </mesh>
     </>
   );

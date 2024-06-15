@@ -32,24 +32,13 @@ const QuoteCard = async () => {
             <FaSquareXTwitter />
           </Link>
         </div>
-        <blockquote className={styles.quoteContainer}>
-          <div>
-            <p className={styles.quote}>
-              <span className={styles.quotationMarkStart}>“</span>
-              Take big bites.
-              <br />
-              Anything worth doing is worth
-              <br />
-              overdoing.
-              <span className={styles.quotationMarkEnd}>”</span>
-            </p>
-          </div>
-          <footer className={styles.quoteAuthor}>
-            Robert A. Heinlein
+        <div className={styles.phraseContainer}>
+          <h1 className={styles.phrase}>
+            Turning hot <strong>coffee</strong>
             <br />
-            <cite>Time Enough for Love</cite>
-          </footer>
-        </blockquote>
+            into <strong>software</strong>
+          </h1>
+        </div>
         <Link
           href="/coffeeos"
           className={styles.linkButton}
@@ -68,7 +57,7 @@ const QuoteCard = async () => {
           <label>
             Enter <b>synth.ts</b>
           </label>
-          <MdOutlinePiano  className={styles.icon} />
+          <MdOutlinePiano className={styles.icon} />
         </Link>
       </div>
     </div>

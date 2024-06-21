@@ -9,6 +9,7 @@ $breakpoints: (
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
+  position: relative;
   gap: 1rem;
 
   height: 70vh;
@@ -63,7 +64,7 @@ $breakpoints: (
       align-items: flex-end;
       text-align: right;
       padding: 1rem 0rem;
-      width: 60%;
+      width: 85%;
     }
     @include media('<tablet') {
       align-items: center;
@@ -146,11 +147,14 @@ $breakpoints: (
         font-weight: lighter;
 
         strong {
+          background: rgb(186, 120, 54);
           background: linear-gradient(
-            182deg,
-            rgba(255, 204, 162, 0.774) 30%,
-            rgba(109, 45, 10, 0.795) 100%
+            180deg,
+            rgba(186, 120, 54, 1) 0%,
+
+            rgba(255, 232, 209, 1) 72%
           );
+
           background-clip: text;
           -webkit-text-fill-color: transparent;
         }

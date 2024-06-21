@@ -34,9 +34,9 @@ const QuoteCard = async () => {
         </div>
         <div className={styles.phraseContainer}>
           <h1 className={styles.phrase}>
-            Turning hot <strong>coffee</strong>
+            Turning <strong className={styles.coffee}>coffee</strong> into
             <br />
-            into <strong>software</strong>
+            production <strong className={styles.software}>software</strong>
           </h1>
         </div>
         <Link

@@ -73,7 +73,6 @@ const Code = ({ pid }: ContentComponentProps) => {
           setPrevMouseX(e.clientX);
           // setPrevMouseY(e.clientY);
 
-          console.log(xMouseDiff, fileExplorerWidth);
           setFileExplorerWidth((prev) => prev - xMouseDiff);
           break;
       }

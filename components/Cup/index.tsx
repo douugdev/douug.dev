@@ -117,10 +117,6 @@ const Cup = () => {
         <boxGeometry args={[1, 50, 50]} />
         <shadowMaterial opacity={0.2} />
       </mesh>
-      <mesh scale={1} position={[-3, 0, -1.33]} receiveShadow>
-        <boxGeometry args={[1, 10, 5]} />
-        <shadowMaterial opacity={0.3} />
-      </mesh>
     </>
   );
 };

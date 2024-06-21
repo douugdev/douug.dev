@@ -1,5 +1,4 @@
 import Browser from '@/components/Browser';
-import { MutableRefObject, createRef } from 'react';
 import { getHundredth } from '@/utils/number';
 
 export const hideDefaultHandler = true;

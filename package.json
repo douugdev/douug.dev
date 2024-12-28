@@ -46,11 +46,14 @@
     "@types/react-dom": "^18.3.0",
     "@types/three": "^0.164.1",
     "@types/uuid": "^9.0.8",
+    "autoprefixer": "^10.4.20",
     "eslint": "^8",
     "eslint-config-next": "^14.2.3",
     "eslint-plugin-react-hooks": "^5.1.0-rc-4c2e457c7c-20240522",
     "patch-package": "^8.0.0",
+    "postcss": "^8.4.49",
     "postinstall-postinstall": "^2.1.0",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.4.5"
   }
 }

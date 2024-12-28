@@ -1,4 +1,18 @@
 import 'styles/globals.css';
+import { Red_Hat_Display, Red_Hat_Mono, Roboto_Serif } from 'next/font/google';
+
+const redHatMono = Red_Hat_Mono({
+  subsets: ['latin'],
+  variable: '--font-red-hat-mono',
+});
+const redHatDisplay = Red_Hat_Display({
+  subsets: ['latin'],
+  variable: '--font-red-hat-display',
+});
+const robotoSerif = Roboto_Serif({
+  subsets: ['latin'],
+  variable: '--font-roboto-serif',
+});
 
 export default function RootLayout({
   children,
@@ -7,7 +21,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body
+        className={`${redHatDisplay.variable} ${robotoSerif.variable} ${redHatMono.variable} theme-dark`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

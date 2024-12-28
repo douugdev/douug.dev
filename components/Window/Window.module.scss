@@ -1,0 +1,129 @@
+.window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  overflow: hidden;
+  z-index: 100;
+  -webkit-font-smoothing: none;
+
+  transition-property: none transform filter opacity;
+  transition-timing-function: ease-in-out;
+
+  &Open {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  &Minimized {
+    transition-property: transform opacity;
+    transform-origin: center center;
+    transition-duration: 500ms;
+    transform: scale(0.01);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .handle {
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 0.4rem;
+      z-index: 1;
+      width: 100%;
+      height: 2rem;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+
+      .windowButton {
+        border: 0;
+        border-radius: 999px;
+        width: 0.8rem;
+        height: 0.8rem;
+        margin: 0 0.25rem;
+        cursor: pointer;
+
+        &Close {
+          @extend .windowButton;
+          background-color: #ff605c;
+        }
+        &Minimize {
+          @extend .windowButton;
+          background-color: #ffbd44;
+        }
+        &Maximize {
+          @extend .windowButton;
+          background-color: #00ca4e;
+        }
+
+        &:hover {
+          filter: brightness(0.7);
+        }
+      }
+
+      .windowTitle {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        cursor: default;
+        @include themify($themes) {
+          color: themed('textColorHalf');
+        }
+      }
+
+      .windowButtonsContainer {
+        position: absolute;
+      }
+
+      .draggable {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+  }
+}
+
+.focused {
+  z-index: 200;
+}
+
+.content {
+  flex: 1;
+  height: 100%;
+}
+
+.fullscreenHint {
+  position: absolute;
+  z-index: 999;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-color: #8c00ff1a;
+  border: solid rgba(128, 0, 128, 0.514) 1px;
+  transform-origin: top center;
+  transition: all 300ms;
+  width: 1%;
+  height: 1%;
+  pointer-events: none;
+  filter: opacity(0);
+  border-radius: 10rem;
+
+  &Show {
+    border-radius: 1rem;
+    filter: opacity(1);
+    height: calc(100vh - var(--dockDistance));
+    width: 100vw;
+  }
+}

@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: rgb(166, 123, 91);
+  background: radial-gradient(
+    ellipse at top,
+    rgb(196, 150, 115) 0%,
+    rgb(68, 53, 43) 100%
+  );
+}
+
+.bgImage {
+  z-index: -100;
+  position: absolute;
+  height: 105vh;
+  width: 105vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(8pt);
+}

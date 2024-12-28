@@ -2,12 +2,12 @@
 const path = require('path');
 
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   swcMinify: true,
   transpilePackages: ['three'],
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
-    prependData: `@use "utils/functions.scss" as *;\n@use "utils/mixins.scss" as *;\n@use "theme.scss";`,
+    prependData: `@use "utils/theme_internal.scss" as *;@use "utils/theme.scss" as *;\n@use "utils/include_media.scss" as *;\n`,
   },
 };
 

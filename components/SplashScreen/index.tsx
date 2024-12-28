@@ -4,16 +4,16 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Color, Euler, MathUtils, Mesh, Vector3 } from 'three';
 import { useEffect, useRef, useState } from 'react';
 import { Text3D } from '@react-three/drei';
-import styles from 'styles/SplashScreen.module.scss';
+import styles from './SplashScreen.module.scss';
 import { bootState } from 'stores/OS';
 
 const bootTexts = [
-  '[boot] douugOS - Copyright (c) Douglas Silva',
+  '[boot] coffeeOS - Copyright (c) Douglas Silva',
   '[kernel] kernel systems OK',
   '[boot] loading standard lib',
   '[mount] mounting filesystems...',
   '[mount] xfs not found, loading douugfs instead...',
-  '[mount] douugfs mount returned code 0',
+  '[mount] coffs mount returned code 0',
   '[boot] standard lib OK',
   '[mount] mounting OK',
   '[drivers] loading browser drivers',
@@ -137,7 +137,7 @@ const RotatingText: React.FC<{ finished: boolean }> = ({ finished }) => {
       position={[0, 0, 6]}
       font={'/pacifico.typeface.json'}
     >
-      douugOS
+      coffeeOS
       <meshNormalMaterial transparent opacity={0} />
     </Text3D>
   );
@@ -190,7 +190,11 @@ const SplashScreen = () => {
         />
       </div>
       <div id="loading-container" className={styles.loadingContainer}>
-        <Canvas className={styles.canvas} gl={{ antialias: true }} dpr={1}>
+        <Canvas
+          className={styles.canvas}
+          gl={{ antialias: true, powerPreference: 'high-performance' }}
+          dpr={1}
+        >
           <RotatingText finished={loadingProgress === 100} />
           <directionalLight position={[-10, -10, -10]} intensity={2} />
           <spotLight position={[0, 2, 10]} intensity={1} />

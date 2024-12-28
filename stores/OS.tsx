@@ -1,38 +1,42 @@
-import { ContentComponentProps, WindowProps } from 'components/Window';
+import { ContentComponentProps } from '@/components/Window';
 import { atom, computed } from 'nanostores';
 import { MutableRefObject } from 'react';
 import { v4 } from 'uuid';
 
-export type ProcessType =
-  | {
-      appName: string;
-      processId: string;
-      iconSource: string;
-      type: 'windowed';
-      launchOpts: { [key: string]: string };
-      window: {
-        Component: React.FunctionComponent<ContentComponentProps>;
-        title?: string;
-        hideDefaultHandler?: boolean;
-        handleRef?: MutableRefObject<HTMLDivElement>;
-        pos: { x?: number; y?: number };
-        isFocused: boolean;
-        state: 'minimized' | 'open' | 'fullscreen';
-        size: {
-          width: number;
-          startWidth: number;
-          height: number;
-          startHeight: number;
-        };
-      };
-    }
-  | {
-      appName: string;
-      processId: string;
-      iconSource: string;
-      launchOpts: { [key: string]: string };
-      type: 'background';
+export type WindowedProcessType = {
+  appName: string;
+  processId: string;
+  iconSource: string;
+  type: 'windowed';
+  launchOpts: { [key: string]: string };
+  window: {
+    Component: React.FunctionComponent<ContentComponentProps>;
+    title?: string;
+    hideDefaultHandler?: boolean;
+    handleRef?: MutableRefObject<HTMLDivElement>;
+    pos: { x?: number; y?: number };
+    isFocused: boolean;
+    state: 'minimized' | 'open' | 'fullscreen';
+    size: {
+      width: number;
+      startWidth: number;
+      height: number;
+      startHeight: number;
     };
+  };
+};
+
+export type BackgroundProcessType = {
+  appName: string;
+  processId: string;
+  iconSource: string;
+  launchOpts: { [key: string]: string };
+  type: 'background';
+};
+
+export type ProcessType = WindowedProcessType | BackgroundProcessType;
+
+export type BootStateType = 'booting' | 'booted' | 'suspended' | 'off';
 
 export const isProcess = (obj: any): obj is ProcessType => {
   return (
@@ -40,11 +44,11 @@ export const isProcess = (obj: any): obj is ProcessType => {
   );
 };
 
-export type BootStateType = 'booting' | 'booted' | 'suspended' | 'off';
+export const mouse = atom<BootStateType>('booting');
 
 export const bootState = atom<BootStateType>('booting');
 
-export const globalPath = atom<string[]>([]);
+export const globalPath = atom<string[]>(['/bin']);
 
 export const processes = atom<ProcessType[]>([]);
 
@@ -84,8 +88,8 @@ export const launchApp = async (
         startWidth: appInfo.startWidth ?? defaultOpts.startWidth,
       },
       pos: {
-        x: windowWidth / 2 - (appInfo.startWidth / 2 ?? 0),
-        y: windowHeight / 2 - (appInfo.startHeight / 2 ?? 0),
+        x: windowWidth / 2 - (appInfo.startWidth ?? 0) / 2,
+        y: windowHeight / 2 - (appInfo.startHeight ?? 0) / 2,
       },
       isFocused: true,
       state: 'open',

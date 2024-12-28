@@ -31,7 +31,6 @@ const AsciiRenderer = ({
       .getElementById('loading-container')
       ?.appendChild(effect.domElement);
     return () => {
-      console.log();
       document.getElementById('ascii')?.remove();
     };
   }, [effect]);

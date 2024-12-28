@@ -9,8 +9,7 @@ export type DesktopEnvironmentType = {
 
 export const desktopEnvironment = deepMap<DesktopEnvironmentType>({
   desktop: {
-    // wallpaper: '/mesh-background-bg.png',
-    wallpaper: '/pexels-stephan-seeber-1261728.jpg',
+    wallpaper: '/bg-cafe-preblurred.jpg',
   },
 });
 

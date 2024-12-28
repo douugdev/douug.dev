@@ -11,26 +11,24 @@ import { WebglAddon } from '@xterm/addon-webgl';
 import { FitAddon } from '@xterm/addon-fit';
 
 import { xtermjsTheme } from '@/styles/external/termTheme';
-import styles from '@/styles/Terminal.module.scss';
+import styles from './Terminal.module.scss';
 import '@/styles/globals.css';
 import '@/styles/external/xterm.css';
 
 import { configureTerminal } from '@/modules/Terminal';
 import { termColors } from '@/utils/termColors';
 import { getProcess } from '@/stores/OS';
-import { WindowProps } from './Window';
+import { WindowProps } from '../Window';
 
 const termstyles = `
-background-color: #00000050;
 color: white;
-flex: 1;
-height: 100%;
-padding: 0.5rem;
+padding: 0rem 0.5rem;
+padding-top: 2rem;
+
 width: 100%;
+height: 100%;
 overflow-y: auto;
-backdrop-filter: blur(30pt);
 overflow-x: hidden;
-z-index: 9;
 `;
 
 // ┌─┬─┐
@@ -39,16 +37,23 @@ z-index: 9;
 // │ │ │
 // └─┴─┘
 
-const welcomeText = `
-┌───────────────────────────────────────────────┐
-│                           ___   __, ©         │ 
-│        /                 /   | (              │
-│     __/  __ , , , , _,  /   /   \`.            │
-│    (_/_ (_)(_/_(_/_(_)_(___/  (___)           │
-│                      /|      ₍ₐₗₚₕₐ ᵥ₀.₂.₁₎   │
-│                     (/                        │
-└───────────────────────────────────────────────┘
+//                 .-. .-.                          .-.
+//                / -'/ -'          .--.    .-.--.-'
+//   .-.  .-._. -/---/--.-.   .-.  /    )`-' (  (_)
+//  (    (   )  /   / ./.-'_./.-'_/    /      `-.
+//   `---'`-'`.' `.'  (__.' (__.'(    /     _    )
+//                                `-.'     (_.--'
 
+const welcomeText = `
+┌─────────────────────────────────────────────────────┐
+│                .-. .-.                          .-. │ 
+│               / -'/ -'          .--.    .-.--.-'    │
+│  .-.  .-._. -/---/--.-.   .-.  /    )\`-' (  (_)     │
+│ (    (   )  /   / ./.-'_./.-'_/    /      \`-.       │
+│  \`---'\`-'\`.' \`.'  (__.' (__.'(    /     _    )      │
+│                               \`-.'     (_.--'       │
+└─────────────────────────────────────────────────────┘
+  
 ${termColors.Bold}Welcome!${termColors.Reset}
 This is an interactive terminal simulator
 you can use to explore my work.
@@ -77,7 +82,6 @@ const Terminal: React.FC<WindowProps> = ({ pid }) => {
   );
   const [loadingFonts, setLoadingFonts] = useState<boolean>(true);
   const [loadingTerm, setLoadingTerm] = useState<boolean>(true);
-  // const [currentCommand, setCurrentCommand] = useState<string>();
 
   const process = useStore(getProcess(pid));
 

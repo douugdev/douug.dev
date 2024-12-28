@@ -1,3 +1,5 @@
+// TODO: This file is a complete mess, needs a rewrite ASAP
+
 import { Terminal } from '@xterm/xterm';
 import ansiEscapes, { cursorLeft, cursorMove } from 'ansi-escapes';
 import { removeByIndex } from '@/utils/string';
@@ -11,6 +13,15 @@ import {
 } from './FileSystem';
 import { atom } from 'nanostores';
 import stripAnsi from 'strip-ansi';
+import { launchApp } from '@/stores/OS';
+
+export type WASM = {
+  cwrap: (
+    funcName: string,
+    paramType: string,
+    paramTypes: string[]
+  ) => (param: string) => Promise<string>;
+};
 
 export const startingDir = () => {
   return hardDrive.get().findDirectory('home')!.findDirectory('douugdev')!;
@@ -28,6 +39,7 @@ export const configureTerminal = (
   let historyIndex = -1;
   let previousCursorPosition = 0;
   let command = '';
+  let wasm: WASM;
 
   let currentDir = startingDir();
 
@@ -134,7 +146,7 @@ export const configureTerminal = (
       f: () => {
         term.writeln(
           [
-            'Welcome to douugOS! Here are some commands you can use:',
+            'Welcome to coffeeOS! Here are some commands you can use:',
             '',
             ...Object.keys(commands).map((e) =>
               formatMessage(e, commands[e as keyof typeof commands].description)
@@ -330,6 +342,35 @@ export const configureTerminal = (
         return 0;
       },
       description: 'Makes an HTTP request',
+    },
+    open: {
+      f: (...args: string[]) => {
+        switch (args[0]) {
+          case 'browser':
+            launchApp('browser');
+            return [];
+          case 'synth':
+            launchApp('browser', { initialURL: 'https://synth.douug.dev' });
+            return [];
+          case 'technopanther':
+            launchApp('browser', {
+              initialURL: 'https://technopanther.douug.dev',
+            });
+            return [];
+          case 'code':
+            launchApp('code');
+            return [];
+        }
+
+        return [`"${args[0]}": No such app or command`];
+      },
+      description: 'Opens an application',
+    },
+    code: {
+      f: (...args: string[]) => {
+        return open('code');
+      },
+      description: 'Opens a file in coffeeIDE ',
     },
   };
 

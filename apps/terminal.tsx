@@ -1,5 +1,5 @@
-import Terminal from 'components/Terminal';
-import { getHundredth } from 'utils/number';
+import Terminal from '@/components/Terminal';
+import { getHundredth } from '@/utils/number';
 
 export const WindowComponent = Terminal;
 

@@ -1,6 +1,9 @@
 .windowContainer {
   display: flex;
 
+  padding-top: 2rem;
+  background-color: #00000057;
+
   width: 100%;
   height: 100%;
   backdrop-filter: blur(30pt);
@@ -10,7 +13,6 @@
     display: flex;
     // flex: 1;
     flex-direction: column;
-    background-color: #00000057;
     color: white;
     padding: 0.5rem 1rem;
 
@@ -35,7 +37,7 @@
       text-align: left;
       background-color: transparent;
       color: #ffffffc4;
-      font-family: 'Red Hat Mono';
+      font-family: var(--font-red-hat-mono);
       border-radius: 0.5rem;
 
       &Selected {

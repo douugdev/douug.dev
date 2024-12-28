@@ -1,20 +1,27 @@
 'use client';
 
-import {
-  MutableRefObject,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
-import styles from 'styles/Browser.module.scss';
-import windowStyles from 'styles/Window.module.scss';
+import { useRef, useState } from 'react';
+import styles from './Browser.module.scss';
+import windowStyles from '../Window/Window.module.scss';
 import { IoLockClosed } from 'react-icons/io5';
 import { IoIosArrowDroprightCircle } from 'react-icons/io';
-import { ContentComponentProps } from './Window';
-import { getProcess, getSafeProcessInfo, processes } from '@/stores/OS';
-import { useStore } from '@nanostores/react';
+import { ContentComponentProps } from '@/components/Window';
+import useWindowedProcess from '@/hooks/useWindow';
+
+type URLInfo = {
+  protocol: string;
+  fqdn: string;
+  service: string;
+  subdomain: string;
+  domain: string;
+  port: string;
+  path: string;
+  query: string;
+  hash: string;
+};
+
+const RICK_ROLL_EMBED =
+  'https://www.youtube.com/embed/dQw4w9WgXcQ?si=zCVyrSU3qkd5cJNG&autoplay=1';
 
 const Browser = ({
   onMouseDown,
@@ -23,33 +30,48 @@ const Browser = ({
   minimize,
   pid,
 }: ContentComponentProps) => {
-  const _ = useStore(processes);
-
-  const process = getSafeProcessInfo(pid);
+  const [windowedProcess] = useWindowedProcess(pid);
 
   const [currentURL, setCurrentURL] = useState<string>(
-    process.launchOpts?.initialURL ||
-      'https://www.youtube.com/embed/dQw4w9WgXcQ?si=zCVyrSU3qkd5cJNG&autoplay=1'
+    windowedProcess.launchOpts?.initialURL || RICK_ROLL_EMBED
   );
   const [editingURL, setEditingURL] = useState<string>(currentURL);
   const [isEditingURL, setIsEditingURL] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null!);
 
-  const beautifiedURL = useMemo(() => {
+  const getBeautifiedUrl = (url: string) => {
     try {
-      return currentURL
-        .split(/https:\/\//)[1]
-        .split('/')[0]
-        .split('www.')[1];
-    } catch {
-      return currentURL;
-    }
-  }, [currentURL]);
+      const matchedGroups = url?.match(
+        /^(?<protocol>https?:\/\/)(?=(?<fqdn>[^:/]+))(?:(?<service>www|ww\d|cdn|ftp|mail|pop\d?|ns\d?|git)\.)?(?:(?<subdomain>[^:/]+)\.)*(?<domain>[^:/]+\.[a-z0-9]+)(?::(?<port>\d+))?(?<path>\/[^?]*)?(?:\?(?<query>[^#]*))?(?:#(?<hash>.*))?/i
+      )?.groups as URLInfo | undefined;
 
-  const getHttpfiedURL = () => {};
+      if (!matchedGroups) {
+        return url;
+      }
+
+      if (!matchedGroups.subdomain) {
+        return matchedGroups.domain;
+      }
+
+      const baseURL = `${matchedGroups.subdomain}.${matchedGroups.domain}`;
+      return baseURL;
+    } catch {
+      return url;
+    }
+  };
+
+  const getHttpfiedURL = (url: string) => {
+    if (url.includes('.') && !url.startsWith('http')) {
+      return `https://${url}`;
+    }
+
+    return url;
+  };
+
   const startChangingUrl = () => {
     setIsEditingURL(true);
+    setEditingURL(getHttpfiedURL(editingURL));
     setTimeout(() => {
       inputRef.current?.focus();
     }, 100);
@@ -57,7 +79,7 @@ const Browser = ({
 
   const stopChangingURL = () => {
     setIsEditingURL(false);
-    setCurrentURL(editingURL);
+    setCurrentURL(getHttpfiedURL(editingURL));
     setTimeout(() => {
       inputRef.current?.blur();
     }, 100);
@@ -65,7 +87,10 @@ const Browser = ({
 
   return (
     <div className={styles.fill}>
-      <div className={windowStyles.handle} onMouseDown={onMouseDown}>
+      <div
+        className={`${windowStyles.handle} ${styles.extendedHandle}`}
+        onMouseDown={onMouseDown}
+      >
         <div className={windowStyles.windowButtonsContainer}>
           <button
             className={windowStyles.windowButtonClose}
@@ -78,7 +103,9 @@ const Browser = ({
           <button
             className={windowStyles.windowButtonMaximize}
             onClick={() =>
-              maximize?.(process.window.state === 'fullscreen' ? false : true)
+              maximize?.(
+                windowedProcess.window.state === 'fullscreen' ? false : true
+              )
             }
           />
         </div>
@@ -88,17 +115,11 @@ const Browser = ({
           </button>
 
           <input
-            className={
-              isEditingURL ? styles.focusedInput : styles.unfocusedInput
-            }
+            className={styles.input}
             ref={inputRef}
-            onClick={() => {
-              startChangingUrl();
-            }}
-            defaultValue={beautifiedURL}
-            value={isEditingURL ? editingURL : beautifiedURL}
-            // disabled={!isEditingURL}
-            // onBlur={stopChangingURL}
+            onClick={() => startChangingUrl()}
+            onBlur={() => stopChangingURL()}
+            value={isEditingURL ? editingURL : getBeautifiedUrl(currentURL)}
             onChange={(e) => {
               setEditingURL(e.target.value);
             }}
@@ -114,9 +135,8 @@ const Browser = ({
         </div>
       </div>
       <iframe
-        is="x-frame-bypass"
         src={currentURL}
-        title="YouTube video player"
+        title="coffeeOS Navigator"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       ></iframe>
     </div>

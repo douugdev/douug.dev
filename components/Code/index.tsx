@@ -1,7 +1,7 @@
 'use client';
 
 import { getSafeProcessInfo, processes } from '@/stores/OS';
-import Editor, { Monaco, useMonaco } from '@monaco-editor/react';
+import Editor, { Monaco } from '@monaco-editor/react';
 import { useStore } from '@nanostores/react';
 import { hardDrive, File, Directory } from 'modules/FileSystem';
 import { editor } from 'monaco-editor';
@@ -12,9 +12,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import styles from 'styles/Code.module.scss';
-import { codeTheme } from 'styles/external/codeTheme';
-import { ContentComponentProps } from './Window';
+import styles from './Code.module.scss';
+import { codeTheme } from '@/styles/external/codeTheme';
+import { ContentComponentProps } from '../Window';
 
 const Code = ({ pid }: ContentComponentProps) => {
   const fileExplorerRef = useRef<HTMLDivElement>(null!);
@@ -73,7 +73,6 @@ const Code = ({ pid }: ContentComponentProps) => {
           setPrevMouseX(e.clientX);
           // setPrevMouseY(e.clientY);
 
-          console.log(xMouseDiff, fileExplorerWidth);
           setFileExplorerWidth((prev) => prev - xMouseDiff);
           break;
       }
@@ -143,15 +142,20 @@ const Code = ({ pid }: ContentComponentProps) => {
           height="100%"
           width="100%"
           options={{
-            fontFamily: 'Open Sans',
+            fontFamily: 'Red Hat Mono',
             fontLigatures: true,
             fontSize: 18,
             minimap: { enabled: false },
             smoothScrolling: true,
             cursorBlinking: 'smooth',
           }}
-          // defaultLanguage="text"
-          language={currentFile?.name.includes('.ts') ? 'typescript' : 'text'}
+          language={
+            currentFile?.name.includes('.ts')
+              ? 'typescript'
+              : currentFile?.name.includes('.doug')
+              ? 'c'
+              : 'text'
+          }
           onMount={handleEditorDidMount}
           value={currentFile?.read() ?? ''}
           onChange={(value) => {

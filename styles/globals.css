@@ -1,4 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Quicksand:wght@300..700&family=Red+Hat+Mono:ital,wght@0,300..700;1,300..700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html,
 body,
 #__next {
@@ -29,12 +32,6 @@ a {
   text-decoration: none;
 }
 
-label,
-p,
-span {
-  font-family: 'Red Hat Mono', monospace;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -49,11 +46,4 @@ input:focus {
 
 canvas {
   image-rendering: pixelated;
-}
-
-h1,
-h2 {
-  font-family: monospace;
-  font-weight: 100;
-  text-align: center;
 }

@@ -22,7 +22,7 @@ const QuoteCard = async () => {
           <Link aria-label="Link to github" href="https://github.com/douugdev">
             <FaGithub />
           </Link>
-          <Link aria-label="Link to email" href="mailto:douglas@prototech.dev">
+          <Link aria-label="Link to email" href="mailto:me@douug.dev">
             <MdEmail />
           </Link>
           <Link
